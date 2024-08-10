@@ -82,12 +82,21 @@ public class CredentialsInput extends Table {
 	}
 
 	private void signup() {
-		if (fieldCheck(nicknameField.getText(), usernameField.getText(), passwordField.getText(), confirmPasswordField.getText())) {
-			if (!screen.getClient().getApiRequests().signup(nicknameField.getText(), usernameField.getText(), passwordField.getText()))
-				errorMessage.setText("username already exists");
-			else
-				screen.getClient().getScreenManager().login();
+		String nickname = nicknameField.getText();
+		String username = usernameField.getText();
+		String password = passwordField.getText();
+		String confirmPassword = confirmPasswordField.getText();
+		if (!fieldCheck(nickname, username, password, confirmPassword))
+			return;
+		if (!screen.getClient().getApiRequests().signup(nickname, username, password)) {
+			errorMessage.setText("username already exists");
+			return;
 		}
+		if (!screen.getClient().getApiRequests().login(username, password)) {
+			screen.getClient().getScreenManager().login();
+			return;
+		}
+		screen.getClient().getScreenManager().dashboard();
 	}
 
 	private boolean fieldCheck(String nickname, String username, String password, String password2) {
