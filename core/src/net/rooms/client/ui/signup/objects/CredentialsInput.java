@@ -15,7 +15,7 @@ import net.rooms.client.ui.signup.SignupScreen;
 
 import java.util.List;
 
-public class CredentialsInput extends Table {
+class CredentialsInput extends Table {
 
 	private final SignupScreen screen;
 	private final TextField nicknameField;
