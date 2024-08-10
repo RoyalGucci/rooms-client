@@ -21,10 +21,9 @@ public class ScreenManager {
     }
 
     public void dispose() {
-        System.out.println("ScreenManager disposed");
         login.dispose();
         signup.dispose();
-        //dashboard.dispose();
+        dashboard.dispose();
     }
 
     public void login() {
