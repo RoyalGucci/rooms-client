@@ -25,6 +25,10 @@ public class LoginScreen implements Screen {
 		return client;
 	}
 
+	public void resetContent() {
+		login.resetContent();
+	}
+
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);

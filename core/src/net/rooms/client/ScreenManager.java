@@ -35,6 +35,8 @@ public class ScreenManager {
 	}
 
 	public void dashboard() {
+		login.resetContent();
+		signup.resetContent();
 		client.setScreen(dashboard);
 	}
 }

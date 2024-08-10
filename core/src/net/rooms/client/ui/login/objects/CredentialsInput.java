@@ -80,7 +80,6 @@ class CredentialsInput extends Table {
 	private void login() {
 		if (screen.getClient().getApiRequests().login(usernameField.getText(), passwordField.getText())) {
 			screen.getClient().getScreenManager().dashboard();
-			resetContent();
 			return;
 		}
 		errorMessage.setText("Invalid credentials");

@@ -99,6 +99,14 @@ class CredentialsInput extends Table {
 		screen.getClient().getScreenManager().dashboard();
 	}
 
+	public void resetContent() {
+		nicknameField.setText("");
+		usernameField.setText("");
+		passwordField.setText("");
+		confirmPasswordField.setText("");
+		errorMessage.setText("");
+	}
+
 	private boolean fieldCheck(String nickname, String username, String password, String password2) {
 		if (!password.equals(password2)) {
 			errorMessage.setText("Passwords do not match");

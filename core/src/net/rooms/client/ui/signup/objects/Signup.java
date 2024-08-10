@@ -14,6 +14,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 public class Signup extends Table {
 
 	private final Table scrollTable;
+	private final CredentialsInput credentialsInput;
 
 	public Signup(SignupScreen screen) {
 		Skin skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
@@ -24,11 +25,16 @@ public class Signup extends Table {
 		Image logo = new Image(new Texture(Gdx.files.internal("logo.jpeg")));
 		scrollTable.add(logo).size(300, 300).padBottom(20);
 		scrollTable.row();
-		scrollTable.add(new CredentialsInput(screen));
+		credentialsInput = new CredentialsInput(screen);
+		scrollTable.add(credentialsInput);
 
 		ScrollPane scrollPane = new ScrollPane(scrollTable, skin);
 		scrollPane.setFadeScrollBars(false);
 		add(scrollPane).expand().fill();
+	}
+
+	public void resetContent() {
+		credentialsInput.resetContent();
 	}
 
 	public void onShow() {

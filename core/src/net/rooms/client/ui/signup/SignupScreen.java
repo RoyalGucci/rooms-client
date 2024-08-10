@@ -25,6 +25,10 @@ public class SignupScreen implements Screen {
 		return client;
 	}
 
+	public void resetContent() {
+		signup.resetContent();
+	}
+
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
