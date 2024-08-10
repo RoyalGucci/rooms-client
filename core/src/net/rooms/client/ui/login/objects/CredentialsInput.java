@@ -1,7 +1,10 @@
 package net.rooms.client.ui.login.objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -13,21 +16,26 @@ import net.rooms.client.ui.login.LoginScreen;
 
 class CredentialsInput extends Table {
 
+	private final LoginScreen screen;
 	private final TextField usernameField;
 	private final TextField passwordField;
 	private final CheckBox showPasswordCheckBox;
 	private final Label errorMessage;
 
 	public CredentialsInput(LoginScreen screen) {
+		this.screen = screen;
 		Skin skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
+		CredentialsInputListener credentialsInputListener = new CredentialsInputListener();
 
 		usernameField = new TextField("", skin);
 		usernameField.setMessageText("Username");
+		usernameField.addListener(credentialsInputListener);
 
 		passwordField = new TextField("", skin);
 		passwordField.setMessageText("Password");
 		passwordField.setPasswordMode(true);
 		passwordField.setPasswordCharacter('*');
+		passwordField.addListener(credentialsInputListener);
 
 		showPasswordCheckBox = new CheckBox("Show Password", skin);
 
@@ -45,12 +53,7 @@ class CredentialsInput extends Table {
 		login.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if (screen.getClient().getApiRequests().login(usernameField.getText(), passwordField.getText())) {
-					screen.getClient().getScreenManager().dashboard();
-					resetContent();
-					return;
-				}
-				errorMessage.setText("Invalid credentials");
+				login();
 			}
 		});
 
@@ -74,10 +77,29 @@ class CredentialsInput extends Table {
 		add(errorMessage).colspan(2);
 	}
 
+	private void login() {
+		if (screen.getClient().getApiRequests().login(usernameField.getText(), passwordField.getText())) {
+			screen.getClient().getScreenManager().dashboard();
+			resetContent();
+			return;
+		}
+		errorMessage.setText("Invalid credentials");
+	}
+
 	public void resetContent() {
 		usernameField.setText("");
 		passwordField.setText("");
 		passwordField.setPasswordMode(true);
 		showPasswordCheckBox.setChecked(false);
+	}
+
+	private final class CredentialsInputListener extends InputListener {
+		@Override
+		public boolean keyDown(InputEvent event, int keycode) {
+			if (keycode == Input.Keys.ENTER || keycode == Input.Keys.NUMPAD_ENTER) login();
+			else if (keycode == Input.Keys.UP) getStage().setKeyboardFocus(usernameField);
+			else if (keycode == Input.Keys.DOWN) getStage().setKeyboardFocus(passwordField);
+			return true;
+		}
 	}
 }
