@@ -44,12 +44,10 @@ class RoomsPanelList extends Table {
 
 	public void downloadContent() {
 		List<Room> roomsList = screen.getClient().getApiRequests().getRooms();
-		System.out.println(roomsList.size());
 		for (Room room : roomsList) addRoom(room);
 	}
 
 	public void resetContent() {
-		System.out.println("clear");
 		scrollTable.clear();
 	}
 }
