@@ -46,7 +46,7 @@ public class LoginScreen implements Screen {
         errorMessage.setColor(1, 0, 0, 1);
 
         // Add elements to the table
-        table.add(logo).size(500, 500).padBottom(20);
+        table.add(logo).size(300, 300).padBottom(20);
         table.row();
         table.add(usernameField).uniformX();
         table.row().pad(10, 0, 10, 0);
