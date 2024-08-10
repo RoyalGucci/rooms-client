@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import net.rooms.client.connection.requests.Room;
+import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 import java.util.List;

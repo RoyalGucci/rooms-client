@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
 import net.rooms.client.connection.requests.CreateRequest;
-import net.rooms.client.connection.requests.Room;
+import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.SignupRequest;
 
 import java.io.IOException;

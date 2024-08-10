@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import net.rooms.client.connection.requests.Room;
+import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class CreateRoomDialog extends Window {

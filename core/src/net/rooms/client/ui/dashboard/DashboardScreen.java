@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import net.rooms.client.Client;
-import net.rooms.client.connection.requests.Room;
+import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.objects.Chat;
 import net.rooms.client.ui.dashboard.objects.NavPanel;
 import net.rooms.client.ui.dashboard.objects.RoomsPanel;

@@ -1,4 +1,4 @@
-package net.rooms.client.connection.requests;
+package net.rooms.client.connection.objects;
 
 import java.time.LocalDateTime;
 

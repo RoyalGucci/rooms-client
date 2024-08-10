@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
-import net.rooms.client.connection.requests.Room;
+import net.rooms.client.connection.objects.Room;
 
 public class Chat extends Table {
 

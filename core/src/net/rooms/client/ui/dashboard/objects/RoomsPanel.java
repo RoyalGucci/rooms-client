@@ -1,7 +1,7 @@
 package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import net.rooms.client.connection.requests.Room;
+import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class RoomsPanel extends Table {
