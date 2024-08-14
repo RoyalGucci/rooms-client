@@ -3,8 +3,10 @@ package net.rooms.client.connection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
-import net.rooms.client.connection.requests.CreateRequest;
+import net.rooms.client.connection.objects.Message;
+import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.objects.Room;
+import net.rooms.client.connection.requests.CreateRequest;
 import net.rooms.client.connection.requests.SignupRequest;
 
 import java.io.IOException;
@@ -17,12 +19,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class APIRequests {
 
 	private String jSessionID = "";
 	@SuppressWarnings("FieldCanBeLocal")
 	private final String domain = "http://localhost:8080/"; // TODO: load from file
+
+	private WS ws;
 
 	private HttpResponse<String> get(String endpoint, String[][] headers) {
 		try (HttpClient client = HttpClient.newHttpClient()) {
@@ -60,7 +65,15 @@ public class APIRequests {
 
 		String setCookieHeader = response.headers().firstValue("Set-Cookie").orElse("");
 		jSessionID = setCookieHeader.split(";")[0]; // Extracts JSESSIONID
-		return jSessionID != null && !jSessionID.isEmpty();
+		if (jSessionID == null || jSessionID.isEmpty()) return false;
+
+		ws = new WS(username, jSessionID);
+		return true;
+	}
+
+	public void logout() {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		post("logout", headers, "");
 	}
 
 	public boolean signup(String nickname, String username, String password) {
@@ -92,5 +105,30 @@ public class APIRequests {
 				.create();
 		Room[] rooms = gson.fromJson(response.body(), Room[].class);
 		return Arrays.asList(rooms);
+	}
+
+	public void message(long roomID, MessageType type, String content) {
+		ws.message(roomID, type, content);
+	}
+
+	public List<Message> getMessages(long roomID) {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		HttpResponse<String> response = get("messages/" + roomID, headers);
+		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
+
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+				.create();
+		Message[] messages = gson.fromJson(response.body(), Message[].class);
+		return Arrays.asList(messages);
+	}
+
+	/**
+	 * Invokes the given operation upon receiving a payload over the web socket connection.
+	 *
+	 * @param listener The operation to invoke.
+	 */
+	public void setWSListener(Consumer<String> listener) {
+		ws.setListener(listener);
 	}
 }
