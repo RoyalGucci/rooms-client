@@ -5,12 +5,11 @@ import com.google.gson.GsonBuilder;
 import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
 import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.MessageType;
-import net.rooms.client.connection.requests.UpdateDescriptionRequest;
-import net.rooms.client.connection.requests.UpdateTitleRequest;
-import net.rooms.client.connection.requests.CreateRequest;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.CreateRequest;
 import net.rooms.client.connection.requests.SignupRequest;
+import net.rooms.client.connection.requests.UpdateDescriptionRequest;
+import net.rooms.client.connection.requests.UpdateTitleRequest;
 
 import java.io.IOException;
 import java.net.URI;
@@ -110,21 +109,19 @@ public class APIRequests {
 		return Arrays.asList(rooms);
 	}
 
-	public boolean updateTitle(long id ,String title) {
+	public boolean updateTitle(long id, String title) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		String body = new Gson().toJson(new UpdateTitleRequest(id, title));
 		HttpResponse<String> response = post("api/v1/room/update/title", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
-	public boolean updateDescription(long id ,String description) {
+	public boolean updateDescription(long id, String description) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		String body = new Gson().toJson(new UpdateDescriptionRequest(id, description));
 		HttpResponse<String> response = post("api/v1/room/update/description", headers, body);
 		return response != null && response.body().equals("success");
 	}
-
-
 
 	public void message(long roomID, MessageType type, String content) {
 		ws.message(roomID, type, content);
