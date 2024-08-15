@@ -11,8 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import net.rooms.client.connection.objects.Room;
+import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class Chat extends Table {
 
@@ -20,16 +22,18 @@ public class Chat extends Table {
 	private final Table chatContainer;
 	private final TextField inputField;
 	private final Label title;
+	private final DashboardScreen screen;
 
-	public Chat() {
-		skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
+	public Chat(DashboardScreen screen) {
+        this.screen = screen;
+        skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
         setBackground(skin.newDrawable("white", 0.8f, 0.8f, 0.8f, 1));
 		// Upper panel (the title section)
 		Table upperPanel = new Table();
 		title = new Label("", skin);
-		ImageButton roomMenu = new ImageButton(skin);
+		ImageButton gameMenu = new ImageButton(skin);
 		upperPanel.add(title).expandX().left().pad(10);
-		upperPanel.add(roomMenu).right().pad(10);
+		upperPanel.add(gameMenu).right().pad(10);
 		add(upperPanel).expandX().fillX().top();
 		row();
 
@@ -49,6 +53,20 @@ public class Chat extends Table {
 		inputField.addListener(new ChatBoxListener());
 		bottomPanel.add(inputField).expand().fill().pad(10);
 		add(bottomPanel).height(60).expandX().fillX().bottom();
+
+		title.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				getStage().addActor(new RoomInfoWindow(screen, skin));
+			}
+		});
+
+		gameMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				//TODO: CREATE A GAME MANU WINDOW
+			}
+		});
 	}
 
 	// TODO: implement methods to add messages by types
@@ -89,7 +107,8 @@ public class Chat extends Table {
 		public boolean keyTyped(InputEvent event, char character) {
 			if (!shift && character == '\n') {
 				// TODO: send message to server
-				addMessage(inputField.getText());
+				String message = inputField.getText(); // maybe create a json
+				addMessage(message);
 				inputField.setText("");
 			}
 			return true;
