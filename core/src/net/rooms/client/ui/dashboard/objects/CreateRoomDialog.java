@@ -24,6 +24,7 @@ public class CreateRoomDialog extends Window {
 		TextField passwordField = new TextField("", skin);
 		passwordField.setMessageText("password");
 		TextButton create = new TextButton("create", skin);
+		TextButton cancel = new TextButton("cancel", skin);
 		passwordField.setDisabled(true);
 		CheckBox disableCheckBox = new CheckBox("", skin);
 
@@ -38,7 +39,8 @@ public class CreateRoomDialog extends Window {
 		add(disableCheckBox);
 		row();
 		add(create).pad(10);
-		// TODO: add cancel option
+		row();
+		add(cancel).pad(10);
 
 		disableCheckBox.addListener(event -> {
 			passwordField.setDisabled(!disableCheckBox.isChecked());
@@ -49,7 +51,14 @@ public class CreateRoomDialog extends Window {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				Room room = screen.getClient().getApiRequests().createRoom(titleField.getText(), descriptionField.getText(), disableCheckBox.isChecked(), passwordField.getText());
-				screen.addRoom(room);
+				screen.putRoom(room);
+				remove();
+			}
+		});
+
+		cancel.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
 				remove();
 			}
 		});

@@ -12,21 +12,27 @@ import net.rooms.client.ui.dashboard.objects.Chat;
 import net.rooms.client.ui.dashboard.objects.NavPanel;
 import net.rooms.client.ui.dashboard.objects.RoomsPanel;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class DashboardScreen implements Screen {
 
 	private final Stage stage;
 	private final Client client;
 	private final RoomsPanel roomsPanel;
+	public long currentRoomID;
+	private final HashMap<Long, Room> rooms;
 
 	private final Chat chat;
 
 	public DashboardScreen(Client client) {
 		this.client = client;
 		stage = new Stage(new ScreenViewport());
+		rooms = new HashMap<>();
 
 		Table root = new Table();
 		root.setFillParent(true);
-		chat = new Chat();
+		chat = new Chat(this);
 		roomsPanel = new RoomsPanel(this);
 		root.add(new NavPanel(this)).width(50).fillY().expandY();
 		root.add(roomsPanel).width(300).fill();
@@ -42,14 +48,21 @@ public class DashboardScreen implements Screen {
 		return chat;
 	}
 
-	public void addRoom(Room room) {
-		roomsPanel.addRoom(room);
+	public Room getRoom(long roomID) {
+		return rooms.get(roomID);
+	}
+
+	public void putRoom(Room room) {
+		rooms.put(room.roomID(), room);
+		roomsPanel.putRoom(room);
 	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		roomsPanel.downloadContent();
+		List<Room> rooms = client.getApiRequests().getRooms();
+		rooms.forEach(room -> this.rooms.put(room.roomID(), room));
+		roomsPanel.updateContent(rooms);
 	}
 
 	@Override
@@ -79,6 +92,8 @@ public class DashboardScreen implements Screen {
 	public void hide() {
 		roomsPanel.resetContent();
 		chat.resetContent();
+		currentRoomID = 0;
+		rooms.clear();
 	}
 
 	@Override

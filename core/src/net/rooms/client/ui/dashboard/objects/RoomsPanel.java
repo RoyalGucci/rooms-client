@@ -4,6 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
+import java.util.List;
+
 public class RoomsPanel extends Table {
 
 	private final RoomsPanelHeader roomsPanelHeader;
@@ -18,12 +20,12 @@ public class RoomsPanel extends Table {
 		add(roomsPanelList).expand().fill();
 	}
 
-	public void addRoom(Room room) {
-		roomsPanelList.addRoom(room);
+	public void putRoom(Room room) {
+		roomsPanelList.putRoom(room);
 	}
 
-	public void downloadContent() {
-		roomsPanelList.downloadContent();
+	public void updateContent(List<Room> rooms) {
+		roomsPanelList.updateContent(rooms);
 	}
 
 	public void resetContent() {
