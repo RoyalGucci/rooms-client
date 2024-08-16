@@ -7,6 +7,7 @@ import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.CreateRequest;
+import net.rooms.client.connection.requests.JoinRequest;
 import net.rooms.client.connection.requests.SignupRequest;
 import net.rooms.client.connection.requests.UpdateDescriptionRequest;
 import net.rooms.client.connection.requests.UpdateTitleRequest;
@@ -108,6 +109,13 @@ public class APIRequests {
 				.create();
 		Room[] rooms = gson.fromJson(response.body(), Room[].class);
 		return Arrays.asList(rooms);
+	}
+
+	public boolean joinRoom(long roomID, String password) {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		String body = new Gson().toJson(new JoinRequest(roomID, password));
+		HttpResponse<String> response = post("api/v1/room/join", headers, body);
+		return response != null && response.body().equals("success");
 	}
 
 	public boolean updateTitle(long id, String title) {
