@@ -8,6 +8,7 @@ import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.CreateRequest;
 import net.rooms.client.connection.requests.JoinRequest;
+import net.rooms.client.connection.requests.LeaveRoom;
 import net.rooms.client.connection.requests.SignupRequest;
 import net.rooms.client.connection.requests.UpdateDescriptionRequest;
 import net.rooms.client.connection.requests.UpdateTitleRequest;
@@ -115,6 +116,13 @@ public class APIRequests {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		String body = new Gson().toJson(new JoinRequest(roomID, password));
 		HttpResponse<String> response = post("api/v1/room/join", headers, body);
+		return response != null && response.body().equals("success");
+	}
+
+	public boolean leaveRoom(long roomID) {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		String body = new Gson().toJson(new LeaveRoom(roomID));
+		HttpResponse<String> response = post("api/v1/room/leave", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
