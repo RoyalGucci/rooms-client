@@ -16,7 +16,9 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.Consumer;
 
 class WS {
@@ -49,7 +51,7 @@ class WS {
 
 	public void message(long roomID, MessageType type, String content) {
 		MessageRequest messageRequest = new MessageRequest(roomID, type, content, jSessionID);
-		handler.session.send("/app/message", new Gson().toJson(messageRequest));
+		handler.send("/app/message", new Gson().toJson(messageRequest));
 	}
 
 	private class SessionHandler extends StompSessionHandlerAdapter {
@@ -57,11 +59,22 @@ class WS {
 		StompSession session;
 		Consumer<String> consumer = s -> {
 		};
+		Queue<String[]> queue = new LinkedList<>();
 
 		@Override
 		public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
 			this.session = session;
 			session.subscribe("/user/" + username + "/queue/messages", this);
+			for (String[] request : queue) send(request[0], request[1]);
+			queue.clear();
+		}
+
+		public void send(String destination, String payload) {
+			if (session == null) {
+				queue.add(new String[]{destination, payload});
+				return;
+			}
+			session.send(destination, payload);
 		}
 
 		@Override
