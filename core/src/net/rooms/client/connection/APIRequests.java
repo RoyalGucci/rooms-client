@@ -6,6 +6,7 @@ import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
 import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.objects.Participant;
+import net.rooms.client.connection.objects.PublicRoom;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.CreateRequest;
 import net.rooms.client.connection.requests.JoinRequest;
@@ -110,6 +111,18 @@ public class APIRequests {
 				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.create();
 		Room[] rooms = gson.fromJson(response.body(), Room[].class);
+		return Arrays.asList(rooms);
+	}
+
+	public List<PublicRoom> searchPublicRooms(String titlePrefix) {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		HttpResponse<String> response = get("api/v1/room/search/" + titlePrefix, headers);
+		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
+
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+				.create();
+		PublicRoom[] rooms = gson.fromJson(response.body(), PublicRoom[].class);
 		return Arrays.asList(rooms);
 	}
 
