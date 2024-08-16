@@ -1,10 +1,13 @@
 package net.rooms.client.connection;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.requests.MessageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.converter.StringMessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
@@ -15,6 +18,8 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +34,7 @@ class WS {
 	private final String jSessionID;
 
 	private final SessionHandler handler;
+	private final Gson gson;
 
 	public WS(String username, String jSessionID) {
 		this.username = username;
@@ -43,43 +49,61 @@ class WS {
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.add("Cookie", jSessionID);
 		stompClient.connectAsync(url, headers, handler);
+
+		gson = new GsonBuilder()
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+				.create();
 	}
 
-	public void setListener(Consumer<String> consumer) {
-		handler.consumer = consumer;
+	public <T> void setWSListener(String destination, Consumer<T> consumer, Type type) {
+		destination = "/user/" + username + "/queue/" + destination;
+		StompFrameHandler frameHandler = new StompFrameHandler() {
+			@Override
+			public @NonNull Type getPayloadType(@NonNull StompHeaders headers) {
+				return String.class;
+			}
+
+			@Override
+			public void handleFrame(@NonNull StompHeaders headers, Object payload) {
+				T frame = gson.fromJson((String) payload, type);
+				consumer.accept(frame);
+			}
+		};
+		if (handler.session == null) {
+			handler.listenerQueue.add(new Object[]{destination, frameHandler});
+			return;
+		}
+		handler.session.subscribe(destination, frameHandler);
 	}
 
 	public void message(long roomID, MessageType type, String content) {
 		MessageRequest messageRequest = new MessageRequest(roomID, type, content, jSessionID);
-		handler.send("/app/message", new Gson().toJson(messageRequest));
+		handler.send("/app/message", gson.toJson(messageRequest));
 	}
 
-	private class SessionHandler extends StompSessionHandlerAdapter {
+	private static class SessionHandler extends StompSessionHandlerAdapter {
 
 		StompSession session;
-		Consumer<String> consumer = s -> {
-		};
-		Queue<String[]> queue = new LinkedList<>();
+		Queue<String[]> sendQueue = new LinkedList<>();
+		Queue<Object[]> listenerQueue = new LinkedList<>();
 
 		@Override
-		public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
+		public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
 			this.session = session;
-			session.subscribe("/user/" + username + "/queue/messages", this);
-			for (String[] request : queue) send(request[0], request[1]);
-			queue.clear();
+
+			for (String[] request : sendQueue) send(request[0], request[1]);
+			sendQueue.clear();
+			for (Object[] listener : listenerQueue)
+				session.subscribe((String) listener[0], (StompFrameHandler) listener[1]);
+			listenerQueue.clear();
 		}
 
 		public void send(String destination, String payload) {
 			if (session == null) {
-				queue.add(new String[]{destination, payload});
+				sendQueue.add(new String[]{destination, payload});
 				return;
 			}
 			session.send(destination, payload);
-		}
-
-		@Override
-		public void handleFrame(@NonNull StompHeaders headers, Object payload) {
-			consumer.accept((String) payload);
 		}
 	}
 }

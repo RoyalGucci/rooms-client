@@ -12,6 +12,7 @@ import net.rooms.client.connection.requests.UpdateDescriptionRequest;
 import net.rooms.client.connection.requests.UpdateTitleRequest;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -140,11 +141,15 @@ public class APIRequests {
 	}
 
 	/**
-	 * Invokes the given operation upon receiving a payload over the web socket connection.
+	 * Subscribes the session to the given web socket endpoint.
+	 * Registers the given operation to be invoked upon receiving a payload over the web socket
+	 * connection.
 	 *
-	 * @param listener The operation to invoke.
+	 * @param destination Indicate which endpoint to listen (e.g. messages).
+	 * @param consumer    The operation to invoke.
+	 * @param type        The expected type of the object in the payload.
 	 */
-	public void setWSListener(Consumer<String> listener) {
-		ws.setListener(listener);
+	public <T> void setWSListener(String destination, Consumer<T> consumer, Type type) {
+		ws.setWSListener(destination, consumer, type);
 	}
 }
