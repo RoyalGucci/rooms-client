@@ -9,6 +9,7 @@ import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.PublicRoom;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.CreateRequest;
+import net.rooms.client.connection.requests.InviteRequest;
 import net.rooms.client.connection.requests.JoinRequest;
 import net.rooms.client.connection.requests.LeaveRoom;
 import net.rooms.client.connection.requests.SignupRequest;
@@ -142,6 +143,13 @@ public class APIRequests {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		String body = new Gson().toJson(new JoinRequest(roomID, password));
 		HttpResponse<String> response = post("api/v1/room/join", headers, body);
+		return response != null && response.body().equals("success");
+	}
+
+	public boolean inviteToRoom(long roomID, String username) {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		String body = new Gson().toJson(new InviteRequest(roomID, username));
+		HttpResponse<String> response = post("api/v1/room/invite", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
