@@ -12,6 +12,7 @@ public class Client extends Game {
 
 	private APIRequests apiRequests;
 	private ScreenManager screenManager;
+	private Repository repository;
 	private SpriteBatch batch;
 	private BitmapFont font;
 
@@ -24,7 +25,7 @@ public class Client extends Game {
 		font.setColor(0, 0, 0, 1);
 		screenManager = new ScreenManager(this);
 		screenManager.login();
-
+		repository = new Repository();
 	}
 
 	@Override
@@ -48,5 +49,9 @@ public class Client extends Game {
 
 	public ScreenManager getScreenManager() {
 		return screenManager;
+	}
+
+	public Repository getRepository() { // TODO Use everywhere to store and access user data
+		return repository;
 	}
 }
