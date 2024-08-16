@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
 import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.MessageType;
+import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.connection.requests.CreateRequest;
 import net.rooms.client.connection.requests.JoinRequest;
@@ -110,6 +111,18 @@ public class APIRequests {
 				.create();
 		Room[] rooms = gson.fromJson(response.body(), Room[].class);
 		return Arrays.asList(rooms);
+	}
+
+	public List<Participant> getParticipants(long roomID) {
+		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		HttpResponse<String> response = get("api/v1/room/" + roomID + "/participants", headers);
+		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
+
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+				.create();
+		Participant[] participants = gson.fromJson(response.body(), Participant[].class);
+		return Arrays.asList(participants);
 	}
 
 	public boolean joinRoom(long roomID, String password) {
