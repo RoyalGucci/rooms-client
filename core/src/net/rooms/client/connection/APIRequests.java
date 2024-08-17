@@ -75,6 +75,10 @@ public class APIRequests {
 		jSessionID = setCookieHeader.split(";")[0]; // Extracts JSESSIONID
 		if (jSessionID == null || jSessionID.isEmpty()) return false;
 
+		headers = new String[][]{{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
+		response = get("api/v1/user/verify", headers); // No such endpoint, 404 expected
+		if (response == null || response.body() == null || response.body().isEmpty()) return false; // No 404, auth failed
+
 		ws = new WS(username, jSessionID);
 		return true;
 	}

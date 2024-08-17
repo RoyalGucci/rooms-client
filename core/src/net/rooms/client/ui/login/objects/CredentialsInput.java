@@ -90,6 +90,7 @@ class CredentialsInput extends Table {
 		passwordField.setText("");
 		passwordField.setPasswordMode(true);
 		showPasswordCheckBox.setChecked(false);
+		errorMessage.setText("");
 	}
 
 	private final class CredentialsInputListener extends InputListener {
