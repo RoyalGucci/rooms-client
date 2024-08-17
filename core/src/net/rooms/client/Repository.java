@@ -12,7 +12,7 @@ import java.util.List;
  * All messages and room participants organized by rooms where the user is a participant.
  */
 public class Repository {
-	private final HashMap<Long, RoomEntry> localRepo;
+	private final HashMap<Long, RoomEntry> localRepo; // Key: roomID
 
 	public Repository() {
 		localRepo = new HashMap<>();
@@ -32,7 +32,7 @@ public class Repository {
 
 	public record RoomEntry(
 			Room room,
-			List<Participant> participants,
+			HashMap<String, Participant> participants, // Key: username
 			List<Message> messages
 	) {
 	}
