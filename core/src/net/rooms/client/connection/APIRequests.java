@@ -32,10 +32,15 @@ import java.util.function.Consumer;
 public class APIRequests {
 
 	private String jSessionID = "";
+	private String username = "";
 	@SuppressWarnings("FieldCanBeLocal")
 	private final String domain = "http://localhost:8080/"; // TODO: load from file
 
 	private WS ws;
+
+	public String getUsername() {
+		return username;
+	}
 
 	private HttpResponse<String> get(String endpoint, String[][] headers) {
 		try (HttpClient client = HttpClient.newHttpClient()) {
@@ -66,6 +71,7 @@ public class APIRequests {
 	}
 
 	public boolean login(String username, String password) {
+		this.username = username;
 		String[][] headers = {{"Content-Type", "application/x-www-form-urlencoded"}};
 		String body = "username=" + username + "&password=" + password;
 		HttpResponse<String> response = post("login", headers, body);
@@ -77,7 +83,8 @@ public class APIRequests {
 
 		headers = new String[][]{{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		response = get("api/v1/user/verify", headers); // No such endpoint, 404 expected
-		if (response == null || response.body() == null || response.body().isEmpty()) return false; // No 404, auth failed
+		if (response == null || response.body() == null || response.body().isEmpty())
+			return false; // No 404, auth failed
 
 		ws = new WS(username, jSessionID);
 		return true;

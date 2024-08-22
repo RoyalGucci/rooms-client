@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
@@ -41,22 +42,26 @@ class RoomsPanelList extends Table {
 			scrollTable.row();
 		} else {
 			roomRow.setText(room.title());
-			screen.getChat().setRoom(room);
+			screen.getChat().resetContent();
+			screen.getChat().setRoom(screen.currentRoomID);
             roomRow.clearListeners();
         }
 
 		roomRow.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				screen.getChat().setRoom(room);
 				screen.currentRoomID = room.roomID();
+				screen.getChat().resetContent();
+				screen.getChat().setRoom(screen.currentRoomID);
+				screen.getChat().setActive();
 			}
 		});
 		roomRows.put(room.roomID(), roomRow);
 	}
 
-	public void updateContent(List<Room> rooms) {
-		for (Room room : rooms) putRoom(room);
+	public void updateContent(List<Repository.RoomEntry> rooms) {
+		resetContent();
+		for (Repository.RoomEntry room : rooms) putRoom(room.room());
 	}
 
 	public void resetContent() {

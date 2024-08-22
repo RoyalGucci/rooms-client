@@ -4,6 +4,7 @@ import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.Room;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +17,10 @@ public class Repository {
 
 	public Repository() {
 		localRepo = new HashMap<>();
+	}
+
+	public HashMap<Long, RoomEntry> getLocalRepo() {
+		return localRepo;
 	}
 
 	public void putEntry(RoomEntry entry) {
@@ -35,5 +40,14 @@ public class Repository {
 			HashMap<String, Participant> participants, // Key: username
 			List<Message> messages
 	) {
+		public RoomEntry(Room room, List<Participant> participants, List<Message> messages) {
+			this(room, hashParticipants(participants), new ArrayList<>(messages));
+		}
+
+		private static HashMap<String, Participant> hashParticipants(List<Participant> participants) {
+			HashMap<String, Participant> participantHashMap = new HashMap<>(participants.size());
+			for (Participant participant : participants) participantHashMap.put(participant.username(), participant);
+			return participantHashMap;
+		}
 	}
 }

@@ -2,51 +2,64 @@ package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import net.rooms.client.connection.objects.Room;
+import net.rooms.client.Repository;
+import net.rooms.client.connection.objects.Message;
+import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class Chat extends Table {
 
 	private final Skin skin;
 	private final Table chatContainer;
+	private final ScrollPane scrollPane;
+	private final Table upperPanel;
+	private final Table bottomPanel;
 	private final TextField inputField;
 	private final Label title;
 	private final DashboardScreen screen;
+
 
 	public Chat(DashboardScreen screen) {
         this.screen = screen;
         skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
         setBackground(skin.newDrawable("white", 0.8f, 0.8f, 0.8f, 1));
 		// Upper panel (the title section)
-		Table upperPanel = new Table();
+		upperPanel = new Table();
 		title = new Label("", skin);
-		ImageButton gameMenu = new ImageButton(skin);
+		Texture texture = new Texture(Gdx.files.internal("game.png"));
+		ImageButton gameMenu = new ImageButton(new TextureRegionDrawable(texture));
+		Texture texture2 = new Texture(Gdx.files.internal("players.png"));
+		ImageButton participants = new ImageButton(new TextureRegionDrawable(texture2));
+		Texture texture3 = new Texture(Gdx.files.internal("settings.png"));
+		ImageButton settings = new ImageButton(new TextureRegionDrawable(texture3));
+		upperPanel.setBackground(skin.newDrawable("white", 0.9f, 0.9f, 0.9f, 1));
 		upperPanel.add(title).expandX().left().pad(10);
+		upperPanel.add(settings).right().pad(10);
+		upperPanel.add(participants).right().pad(10);
 		upperPanel.add(gameMenu).right().pad(10);
 		add(upperPanel).expandX().fillX().top();
+		row();
+		add().height(10);
 		row();
 
 		// Center panel (chat area with scroll pane)
 		chatContainer = new Table();
 		chatContainer.top();
-		ScrollPane scrollPane = new ScrollPane(chatContainer, skin);
+		scrollPane = new ScrollPane(chatContainer, skin);
 		scrollPane.setFadeScrollBars(false);
 		add(scrollPane).expand().fill().pad(10);
 		row();
 
 		// Bottom panel (input field)
-		Table bottomPanel = new Table();
+		bottomPanel = new Table();
 		inputField = new TextArea("", skin);
 		inputField.setMessageText("Type a message...");
 		inputField.setAlignment(Align.left);
@@ -54,7 +67,7 @@ public class Chat extends Table {
 		bottomPanel.add(inputField).expand().fill().pad(10);
 		add(bottomPanel).height(60).expandX().fillX().bottom();
 
-		title.addListener(new ClickListener() {
+		settings.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				getStage().addActor(new RoomInfoWindow(screen, skin));
@@ -67,17 +80,41 @@ public class Chat extends Table {
 				//TODO: CREATE A GAME MANU WINDOW
 			}
 		});
+
+		participants.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				getStage().addActor(new PlayersWindow(screen, skin));
+			}
+		});
+	}
+
+	public void setInactive(){
+		upperPanel.setTouchable(Touchable.disabled);
+		chatContainer.setTouchable(Touchable.disabled);
+		bottomPanel.setTouchable(Touchable.disabled);
+	}
+
+	public void setActive(){
+		upperPanel.setTouchable(Touchable.enabled);
+		chatContainer.setTouchable(Touchable.enabled);
+		bottomPanel.setTouchable(Touchable.enabled);
 	}
 
 	// TODO: implement methods to add messages by types
-	public void addMessage(String message) {
+	public void addMessage(String message, String username, boolean me) {
 		chatContainer.row();
-		chatContainer.add(new ChatMessage(message, skin)).expandX().fillX().pad(5);
+		chatContainer.add(new ChatMessage(message, username, me, skin)).expandX().fillX().pad(5);
+		scrollPane.scrollTo(0, 0, 0, scrollPane.getHeight(), false, true);
+		scrollPane.updateVisualScroll();
 	}
 
-	public void setRoom(Room room) {
-		title.setText(room.title());
-		// TODO: download messages for this room from the server
+	public void setRoom(long roomID) {
+		Repository.RoomEntry current = screen.getRoom(roomID);
+		title.setText(current.room().title());
+		for (Message message : current.messages()) {
+			addMessage(message.content(),message.sender(),screen.getClient().getApiRequests().getUsername().equals(message.sender()));
+		}
 	}
 
 	public void resetContent() {
@@ -108,7 +145,8 @@ public class Chat extends Table {
 			if (!shift && character == '\n') {
 				// TODO: send message to server
 				String message = inputField.getText(); // maybe create a json
-				addMessage(message);
+				//addMessage(message);
+				screen.getClient().getApiRequests().message(screen.getRoom(screen.currentRoomID).room().roomID(), MessageType.MESSAGE,message);
 				inputField.setText("");
 			}
 			return true;

@@ -16,16 +16,27 @@ public class NavPanel extends Table {
 		top().left();
 		setBackground(skin.newDrawable("white", 0.3f, 0.3f, 0.3f, 1));
 
-		Texture texture = new Texture(Gdx.files.internal("settings-icon-size_32.png"));
+		Texture texture = new Texture(Gdx.files.internal("door.png"));
 		ImageButton logout = new ImageButton(new TextureRegionDrawable(texture));
+		Texture texture2 = new Texture(Gdx.files.internal("search.png"));
+		ImageButton search = new ImageButton(new TextureRegionDrawable(texture2));
 		logout.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				screen.getClient().getScreenManager().login();
+				screen.getClient().getApiRequests().logout();
+				screen.getClient().getRepository().clear();
 			}
 		});
-		add(logout).pad(10).left();
+		search.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				//TODO: IMPLEMENT NEW SCREEN
+			}
+		});
+		add(logout).pad(5).left();
 		row();
-
+		add(search).padTop(20).left();
+		row();
 	}
 }

@@ -1,6 +1,7 @@
 package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
@@ -24,7 +25,7 @@ public class RoomsPanel extends Table {
 		roomsPanelList.putRoom(room);
 	}
 
-	public void updateContent(List<Room> rooms) {
+	public void updateContent(List<Repository.RoomEntry> rooms) {
 		roomsPanelList.updateContent(rooms);
 	}
 
