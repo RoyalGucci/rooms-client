@@ -41,7 +41,7 @@ public class DashboardScreen implements Screen {
 	}
 
 	public List<Repository.RoomEntry> getRooms() {
-		return new ArrayList<>(client.getRepository().getLocalRepo().values());
+		return new ArrayList<>(client.getRepository().listEntries());
 	}
 
 	public void setSearchedRooms(List<Repository.RoomEntry> updatedRooms) {
@@ -61,8 +61,8 @@ public class DashboardScreen implements Screen {
 	}
 
 	public void deleteRoom(long roomID) {
-		client.getRepository().getLocalRepo().remove(roomID);
-		List<Repository.RoomEntry> updatedRooms = new ArrayList<>(client.getRepository().getLocalRepo().values());
+		client.getRepository().removeEntry(roomID);
+		List<Repository.RoomEntry> updatedRooms = new ArrayList<>(client.getRepository().listEntries());
 		roomsPanel.updateContent(updatedRooms);
 	}
 

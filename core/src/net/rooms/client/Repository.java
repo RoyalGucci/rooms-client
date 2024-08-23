@@ -5,6 +5,7 @@ import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.Room;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,16 +20,20 @@ public class Repository {
 		localRepo = new HashMap<>();
 	}
 
-	public HashMap<Long, RoomEntry> getLocalRepo() {
-		return localRepo;
-	}
-
 	public void putEntry(RoomEntry entry) {
 		localRepo.put(entry.room.roomID(), entry);
 	}
 
 	public RoomEntry getEntry(long roomID) {
 		return localRepo.get(roomID);
+	}
+
+	public void removeEntry(long roomID) {
+		localRepo.remove(roomID);
+	}
+
+	public Collection<RoomEntry> listEntries() {
+		return localRepo.values();
 	}
 
 	public void clear() {
