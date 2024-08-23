@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.MessageType;
+import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class Chat extends Table {
@@ -71,6 +72,8 @@ public class Chat extends Table {
 		inputField.addListener(new ChatBoxListener());
 		bottomPanel.add(inputField).expand().fill().pad(10);
 		add(bottomPanel).height(60).expandX().fillX().bottom();
+
+		chatContainer.addListener(new ScrollListener(chatContainer));
 
 		settings.addListener(new ClickListener() {
 			@Override

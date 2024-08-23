@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.Room;
+import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 import java.util.Collection;
@@ -26,13 +27,14 @@ class RoomsPanelList extends Table {
 		this.screen = screen;
 		this.roomRows = new HashMap<>();
 		skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
-		scrollTable = new Table();
-		scrollTable.top().left();
 		setBackground(skin.newDrawable("white", 0.2f, 0.2f, 0.2f, 1));
 
+		scrollTable = new Table();
+		scrollTable.top().left();
 		ScrollPane scrollPane = new ScrollPane(scrollTable, skin);
 		scrollPane.setFadeScrollBars(false);
 		add(scrollPane).expand().fill();
+		addListener(new ScrollListener(scrollTable));
 	}
 
 	public void putRoom(Room room) {
