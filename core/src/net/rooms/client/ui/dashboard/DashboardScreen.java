@@ -143,7 +143,6 @@ public class DashboardScreen implements Screen {
 		chat.setInteractive(false);
 		chat.resetContent();
 		currentRoomID = 0;
-		//rooms.clear();
 	}
 
 	@Override
