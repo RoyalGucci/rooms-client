@@ -69,9 +69,8 @@ public class DashboardScreen implements Screen {
 			chat.setInteractive(false);
 			chat.resetContent();
 		}
+		roomsPanel.removeRoom(roomID);
 		client.getRepository().removeEntry(roomID);
-		List<Repository.RoomEntry> updatedRooms = new ArrayList<>(client.getRepository().listEntries());
-		roomsPanel.updateContent(updatedRooms);
 	}
 
 	public void putRoom(Room room) {
@@ -82,19 +81,14 @@ public class DashboardScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		List<Room> rooms = client.getApiRequests().getRooms();
-		List<Repository.RoomEntry> roomEntries = new ArrayList<>();
-		for (Room room : rooms) {
-			Repository.RoomEntry entry = new Repository.RoomEntry(room, client.getApiRequests().getParticipants(room.roomID()), client.getApiRequests().getMessages(room.roomID()));
-			roomEntries.add(entry);
-			client.getRepository().putEntry(entry);
-		}
-		roomsPanel.updateContent(roomEntries);
+
+		client.getApiRequests().getRooms().forEach(this::putRoom);
 		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
 		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
 		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
 		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
 		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
+
 		chat.setInteractive(false);
 	}
 
@@ -107,6 +101,8 @@ public class DashboardScreen implements Screen {
 	private void roomDetailsListener(Room room) {
 		Repository.RoomEntry entry = new Repository.RoomEntry(room, client.getRepository().getEntry(room.roomID()).participants(), client.getRepository().getEntry(room.roomID()).messages());
 		client.getRepository().putEntry(entry);
+		chat.updateTitle(room.title());
+		roomsPanel.putRoom(room);
 	}
 
 	private void joinListener(Participant participant) {

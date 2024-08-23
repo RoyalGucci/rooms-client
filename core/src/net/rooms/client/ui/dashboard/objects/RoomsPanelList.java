@@ -1,6 +1,7 @@
 package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -11,8 +12,8 @@ import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 class RoomsPanelList extends Table {
 
@@ -42,8 +43,6 @@ class RoomsPanelList extends Table {
 			scrollTable.row();
 		} else {
 			roomRow.setText(room.title());
-			screen.getChat().resetContent();
-			screen.getChat().setRoom(screen.currentRoomID);
             roomRow.clearListeners();
         }
 
@@ -59,7 +58,12 @@ class RoomsPanelList extends Table {
 		roomRows.put(room.roomID(), roomRow);
 	}
 
-	public void updateContent(List<Repository.RoomEntry> rooms) {
+	public void removeRoom(long roomID) {
+		Actor roomRow = roomRows.remove(roomID);
+		scrollTable.removeActor(roomRow);
+	}
+
+	public void updateContent(Collection<Repository.RoomEntry> rooms) {
 		resetContent();
 		for (Repository.RoomEntry room : rooms) putRoom(room.room());
 	}

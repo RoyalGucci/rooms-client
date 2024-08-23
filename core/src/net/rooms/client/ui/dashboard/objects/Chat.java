@@ -112,6 +112,10 @@ public class Chat extends Table {
 		}
 	}
 
+	public void updateTitle(String title) {
+		this.title.setText(title);
+	}
+
 	public void resetContent() {
 		chatContainer.clearChildren();
 		title.setText("");

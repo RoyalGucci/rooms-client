@@ -5,7 +5,7 @@ import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
-import java.util.List;
+import java.util.Collection;
 
 public class RoomsPanel extends Table {
 
@@ -25,7 +25,11 @@ public class RoomsPanel extends Table {
 		roomsPanelList.putRoom(room);
 	}
 
-	public void updateContent(List<Repository.RoomEntry> rooms) {
+	public void removeRoom(long roomID) {
+		roomsPanelList.removeRoom(roomID);
+	}
+
+	public void updateContent(Collection<Repository.RoomEntry> rooms) {
 		roomsPanelList.updateContent(rooms);
 	}
 
