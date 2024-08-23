@@ -1,12 +1,14 @@
 package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import net.rooms.client.ui.RoomsWindow;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
-public class PlayersWindow extends Window {
+public class PlayersWindow extends RoomsWindow {
 	public PlayersWindow(DashboardScreen screen, Skin skin) {
 		super("Players", skin);
 		setSize(150, 300);
@@ -21,16 +23,5 @@ public class PlayersWindow extends Window {
 
 		// Add the scroll pane to the window
 		this.add(scrollPane).expand().fill();
-
-		TextButton closeButton = new TextButton("X", skin);
-		closeButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				PlayersWindow.this.remove();
-			}
-		});
-
-		// Add the close button to the window's title table
-		this.getTitleTable().add(closeButton).padLeft(10);
 	}
 }

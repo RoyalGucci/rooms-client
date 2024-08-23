@@ -2,11 +2,15 @@ package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import net.rooms.client.ui.RoomsWindow;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
-public class RoomInfoWindow extends Window {
+public class RoomInfoWindow extends RoomsWindow {
 	//TODO: ADD INFORMATION DISPLAY, DESCRIPTION AND PARTICIPANTS
 	public RoomInfoWindow(DashboardScreen screen, Skin skin) {
 		super("Change Room Details", skin);
@@ -18,7 +22,6 @@ public class RoomInfoWindow extends Window {
 		descriptionField.setMessageText("Description");
 		TextButton changeTitle = new TextButton("change", skin);
 		TextButton changeDescription = new TextButton("change", skin);
-		TextButton finish = new TextButton("close", skin);
 		TextButton exit = new TextButton("exit room", skin);
 		Label errorMessage = new Label("", skin);
 		errorMessage.setColor(1, 0, 0, 1);
@@ -28,8 +31,6 @@ public class RoomInfoWindow extends Window {
 		row();
 		add(descriptionField).pad(10).size(300, 28);
 		add(changeDescription).pad(10);
-		row();
-		add(finish).pad(10);
 		row();
 		add(errorMessage).pad(10);
 		row();
@@ -48,13 +49,6 @@ public class RoomInfoWindow extends Window {
 			public void clicked(InputEvent event, float x, float y) {
 				if (!screen.getClient().getApiRequests().updateDescription(screen.currentRoomID, descriptionField.getText()))
 					errorMessage.setText("could not change description");
-			}
-		});
-
-		finish.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				remove();
 			}
 		});
 
