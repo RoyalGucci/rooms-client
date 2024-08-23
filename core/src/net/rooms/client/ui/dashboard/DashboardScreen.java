@@ -48,6 +48,10 @@ public class DashboardScreen implements Screen {
 		roomsPanel.updateContent(updatedRooms);
 	}
 
+	public Stage getStage() {
+		return stage;
+	}
+
 	public Client getClient() {
 		return client;
 	}
@@ -60,7 +64,11 @@ public class DashboardScreen implements Screen {
 		return client.getRepository().getEntry(roomID);
 	}
 
-	public void deleteRoom(long roomID) {
+	public void removeRoom(long roomID) {
+		if (roomID == currentRoomID) {
+			chat.setInteractive(false);
+			chat.resetContent();
+		}
 		client.getRepository().removeEntry(roomID);
 		List<Repository.RoomEntry> updatedRooms = new ArrayList<>(client.getRepository().listEntries());
 		roomsPanel.updateContent(updatedRooms);
@@ -87,7 +95,7 @@ public class DashboardScreen implements Screen {
 		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
 		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
 		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
-		chat.setInactive();
+		chat.setInteractive(false);
 	}
 
 	private void massagesListener(Message message) {
@@ -136,6 +144,7 @@ public class DashboardScreen implements Screen {
 	@Override
 	public void hide() {
 		roomsPanel.resetContent();
+		chat.setInteractive(false);
 		chat.resetContent();
 		currentRoomID = 0;
 		//rooms.clear();

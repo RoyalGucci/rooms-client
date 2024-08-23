@@ -61,13 +61,12 @@ public class RoomInfoWindow extends Window {
 		exit.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (screen.getClient().getApiRequests().leaveRoom(screen.currentRoomID))
+				if (!screen.getClient().getApiRequests().leaveRoom(screen.currentRoomID)) {
 					errorMessage.setText("could not leave room");
-				else {
-					screen.deleteRoom(screen.currentRoomID);
-					remove();
+					return;
 				}
-
+				screen.removeRoom(screen.currentRoomID);
+				remove();
 			}
 		});
 	}

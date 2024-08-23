@@ -89,16 +89,11 @@ public class Chat extends Table {
 		});
 	}
 
-	public void setInactive(){
-		upperPanel.setTouchable(Touchable.disabled);
-		chatContainer.setTouchable(Touchable.disabled);
-		bottomPanel.setTouchable(Touchable.disabled);
-	}
-
-	public void setActive(){
-		upperPanel.setTouchable(Touchable.enabled);
-		chatContainer.setTouchable(Touchable.enabled);
-		bottomPanel.setTouchable(Touchable.enabled);
+	public void setInteractive(boolean interactive){
+		Touchable touchable = interactive ? Touchable.enabled : Touchable.disabled;
+		upperPanel.setTouchable(touchable);
+		chatContainer.setTouchable(touchable);
+		bottomPanel.setTouchable(touchable);
 	}
 
 	// TODO: implement methods to add messages by types
@@ -121,6 +116,7 @@ public class Chat extends Table {
 		chatContainer.clearChildren();
 		title.setText("");
 		inputField.setText("");
+		screen.getStage().setKeyboardFocus(chatContainer);
 	}
 
 	private final class ChatBoxListener extends InputListener {

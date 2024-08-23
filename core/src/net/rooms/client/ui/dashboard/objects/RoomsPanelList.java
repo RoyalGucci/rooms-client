@@ -53,7 +53,7 @@ class RoomsPanelList extends Table {
 				screen.currentRoomID = room.roomID();
 				screen.getChat().resetContent();
 				screen.getChat().setRoom(screen.currentRoomID);
-				screen.getChat().setActive();
+				screen.getChat().setInteractive(true);
 			}
 		});
 		roomRows.put(room.roomID(), roomRow);
