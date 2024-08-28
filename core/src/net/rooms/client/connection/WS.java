@@ -87,6 +87,11 @@ class WS {
 		handler.send("/game/join", gson.toJson(participationRequest));
 	}
 
+	public void leaveGame(long id) {
+		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
+		handler.send("/game/leave", gson.toJson(participationRequest));
+	}
+
 	private static class SessionHandler extends StompSessionHandlerAdapter {
 
 		StompSession session;

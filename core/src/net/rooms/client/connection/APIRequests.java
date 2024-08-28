@@ -193,6 +193,10 @@ public class APIRequests {
 		ws.joinGame(id);
 	}
 
+	public void leaveGame(long id) {
+		ws.leaveGame(id);
+	}
+
 	public List<Message> getMessages(long roomID) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		HttpResponse<String> response = get("messages/" + roomID, headers);
