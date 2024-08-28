@@ -87,7 +87,7 @@ public class DashboardScreen implements Screen {
 	private void massagesListener(Message message) {
 		if (currentRoomID == message.roomID())
 			chat.addMessage(message.content(), message.sender(), client.getApiRequests().getUsername().equals(message.sender()));
-		client.getRepository().getEntry(message.roomID()).messages().add(message);
+		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
 	}
 
 	private void roomDetailsListener(Room room) {
