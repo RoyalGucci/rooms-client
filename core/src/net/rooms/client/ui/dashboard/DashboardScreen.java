@@ -7,7 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import net.rooms.client.Client;
+import net.rooms.client.JSON;
 import net.rooms.client.Repository;
+import net.rooms.client.connection.objects.GameUpdate;
 import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.Room;
@@ -105,6 +107,17 @@ public class DashboardScreen implements Screen {
 		client.getRepository().getEntry(participant.roomID()).participants().remove(participant.username());
 	}
 
+	private void joinGameListener(Message message) {
+		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
+		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
+	}
+
+	private void leaveGameListener(Message message) {
+		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
+		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
+	}
 
 	@Override
 	public void render(float delta) {
@@ -140,6 +153,8 @@ public class DashboardScreen implements Screen {
 		client.getApiRequests().addWSListener("title", this::roomDetailsListener, Room.class);
 		client.getApiRequests().addWSListener("join", this::joinListener, Participant.class);
 		client.getApiRequests().addWSListener("leave", this::leaveListener, Participant.class);
+		client.getApiRequests().addWSListener("game/join", this::joinGameListener, Message.class);
+		client.getApiRequests().addWSListener("game/leave", this::leaveGameListener, Message.class);
 
 		chat.setInteractive(false);
 	}
