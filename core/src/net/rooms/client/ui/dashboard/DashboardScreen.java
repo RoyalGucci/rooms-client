@@ -135,7 +135,6 @@ public class DashboardScreen implements Screen {
 	}
 
 	public void loadDashboard() {
-
 		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
 		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
 		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
