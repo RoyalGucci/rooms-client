@@ -189,6 +189,10 @@ public class APIRequests {
 		ws.message(roomID, type, content);
 	}
 
+	public void joinGame(long id) {
+		ws.joinGame(id);
+	}
+
 	public List<Message> getMessages(long roomID) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		HttpResponse<String> response = get("messages/" + roomID, headers);
