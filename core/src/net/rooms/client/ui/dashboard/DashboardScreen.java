@@ -81,15 +81,7 @@ public class DashboardScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-
 		client.getApiRequests().getRooms().forEach(this::putRoom);
-		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
-		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
-		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
-		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
-		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
-
-		chat.setInteractive(false);
 	}
 
 	private void massagesListener(Message message) {
@@ -139,6 +131,21 @@ public class DashboardScreen implements Screen {
 
 	@Override
 	public void hide() {
+
+	}
+
+	public void loadDashboard() {
+
+		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
+		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
+		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
+		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
+		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
+
+		chat.setInteractive(false);
+	}
+
+	public void unloadDashboard() {
 		roomsPanel.resetContent();
 		chat.setInteractive(false);
 		chat.resetContent();

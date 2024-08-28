@@ -1,5 +1,6 @@
 package net.rooms.client.connection.objects;
 
 public enum MessageType {
-	MESSAGE
+	MESSAGE,
+	GAME
 }
