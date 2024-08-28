@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.requests.MessageRequest;
+import net.rooms.client.connection.requests.ParticipationRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -55,7 +56,7 @@ class WS {
 				.create();
 	}
 
-	public <T> void setWSListener(String destination, Consumer<T> consumer, Type type) {
+	public <T> void addWSListener(String destination, Consumer<T> consumer, Type type) {
 		destination = "/user/" + username + "/queue/" + destination;
 		StompFrameHandler frameHandler = new StompFrameHandler() {
 			@Override
@@ -79,6 +80,16 @@ class WS {
 	public void message(long roomID, MessageType type, String content) {
 		MessageRequest messageRequest = new MessageRequest(roomID, type, content, jSessionID);
 		handler.send("/app/message", gson.toJson(messageRequest));
+	}
+
+	public void joinGame(long id) {
+		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
+		handler.send("/game/join", gson.toJson(participationRequest));
+	}
+
+	public void leaveGame(long id) {
+		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
+		handler.send("/game/leave", gson.toJson(participationRequest));
 	}
 
 	private static class SessionHandler extends StompSessionHandlerAdapter {
