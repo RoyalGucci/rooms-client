@@ -55,7 +55,7 @@ class WS {
 				.create();
 	}
 
-	public <T> void setWSListener(String destination, Consumer<T> consumer, Type type) {
+	public <T> void addWSListener(String destination, Consumer<T> consumer, Type type) {
 		destination = "/user/" + username + "/queue/" + destination;
 		StompFrameHandler frameHandler = new StompFrameHandler() {
 			@Override

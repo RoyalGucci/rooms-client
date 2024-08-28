@@ -135,11 +135,11 @@ public class DashboardScreen implements Screen {
 	}
 
 	public void loadDashboard() {
-		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
-		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
-		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
-		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
-		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
+		client.getApiRequests().addWSListener("messages", this::massagesListener, Message.class);
+		client.getApiRequests().addWSListener("description", this::roomDetailsListener, Room.class);
+		client.getApiRequests().addWSListener("title", this::roomDetailsListener, Room.class);
+		client.getApiRequests().addWSListener("join", this::joinListener, Participant.class);
+		client.getApiRequests().addWSListener("leave", this::leaveListener, Participant.class);
 
 		chat.setInteractive(false);
 	}

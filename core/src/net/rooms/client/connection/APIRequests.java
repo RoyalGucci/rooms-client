@@ -210,7 +210,7 @@ public class APIRequests {
 	 * @param consumer    The operation to invoke.
 	 * @param type        The expected type of the object in the payload.
 	 */
-	public <T> void setWSListener(String destination, Consumer<T> consumer, Type type) {
-		ws.setWSListener(destination, consumer, type);
+	public <T> void addWSListener(String destination, Consumer<T> consumer, Type type) {
+		ws.addWSListener(destination, consumer, type);
 	}
 }
