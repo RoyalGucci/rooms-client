@@ -3,15 +3,23 @@ package net.rooms.client.ui.dashboard.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import net.rooms.client.JSON;
+import net.rooms.client.connection.objects.MessageType;
+import net.rooms.client.connection.objects.PongConfig;
 import net.rooms.client.ui.RoomsWindow;
 import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class CreateGameWindow extends RoomsWindow {
-	private String SelectedGame = "Pong";
+	private String selectedGame = "Pong"; // TODO try to use MessageType enum properties instead
 	private int playerNum = 2;
 
 	public CreateGameWindow(DashboardScreen screen, Skin skin) {
@@ -22,12 +30,12 @@ public class CreateGameWindow extends RoomsWindow {
 		table.addListener(new ScrollListener(table));
 
 		TextButton createButton = new TextButton("Create", skin);
-		table.add(new Label("Choose a game:",skin));
+		table.add(new Label("Choose a game:", skin));
 		SelectBox<String> gamesDropdown = new SelectBox<>(skin); // 'skin' is your UI skin
 		String[] options = {"Pong", "Snakes", "Tanks"};
 		gamesDropdown.setItems(options);
 		table.add(gamesDropdown).pad(20).row();
-		table.add(new Label("Choose amount of players:",skin));
+		table.add(new Label("Choose amount of players:", skin));
 		SelectBox<String> playerNumDropdown = new SelectBox<>(skin);
 		String[] num = {"2", "3", "4"};
 		playerNumDropdown.setItems(num);
@@ -38,7 +46,7 @@ public class CreateGameWindow extends RoomsWindow {
 		gamesDropdown.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				SelectedGame = gamesDropdown.getSelected();
+				selectedGame = gamesDropdown.getSelected();
 			}
 		});
 
@@ -52,7 +60,10 @@ public class CreateGameWindow extends RoomsWindow {
 		createButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				//screen.getClient().getApiRequests().message(screen.currentRoomID, MessageType.GAME,json);
+				if (selectedGame.equals("Pong"))
+					// TODO handle winScore
+					screen.getClient().getApiRequests().message(screen.currentRoomID, MessageType.PONG_GAME_OPEN, JSON.toJson(new PongConfig(playerNum, -1)));
+				// TODO handle more games
 				remove();
 			}
 		});
