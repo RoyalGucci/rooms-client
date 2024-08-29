@@ -1,8 +1,6 @@
 package net.rooms.client.connection;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
+import net.rooms.client.JSON;
 import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.objects.Participant;
@@ -19,13 +17,11 @@ import net.rooms.client.connection.requests.UpdateTitleRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -114,21 +110,18 @@ public class APIRequests {
 
 	public boolean signup(String nickname, String username, String password) {
 		String[][] headers = {{"Content-Type", "application/json"}};
-		String body = new Gson().toJson(new SignupRequest(nickname, username, password, 0));
+		String body = JSON.toJson(new SignupRequest(nickname, username, password, 0));
 		HttpResponse<String> response = post("api/v1/registration", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
 	public Room createRoom(String title, String description, boolean isPrivate, String password) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
-		String body = new Gson().toJson(new CreateRequest(title, description, isPrivate, password));
+		String body = JSON.toJson(new CreateRequest(title, description, isPrivate, password));
 		HttpResponse<String> response = post("api/v1/room/create", headers, body);
 		if (response == null) return null;
 
-		Gson gson = new GsonBuilder()
-				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-				.create();
-		return gson.fromJson(response.body(), Room.class);
+		return JSON.fromJson(response.body(), Room.class);
 	}
 
 	public List<Room> getRooms() {
@@ -136,10 +129,7 @@ public class APIRequests {
 		HttpResponse<String> response = get("api/v1/room/list", headers);
 		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
 
-		Gson gson = new GsonBuilder()
-				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-				.create();
-		Room[] rooms = gson.fromJson(response.body(), Room[].class);
+		Room[] rooms = JSON.fromJson(response.body(), Room[].class);
 		return Arrays.asList(rooms);
 	}
 
@@ -148,10 +138,7 @@ public class APIRequests {
 		HttpResponse<String> response = get("api/v1/room/search/" + titlePrefix, headers);
 		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
 
-		Gson gson = new GsonBuilder()
-				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-				.create();
-		PublicRoom[] rooms = gson.fromJson(response.body(), PublicRoom[].class);
+		PublicRoom[] rooms = JSON.fromJson(response.body(), PublicRoom[].class);
 		return Arrays.asList(rooms);
 	}
 
@@ -160,44 +147,41 @@ public class APIRequests {
 		HttpResponse<String> response = get("api/v1/room/" + roomID + "/participants", headers);
 		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
 
-		Gson gson = new GsonBuilder()
-				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-				.create();
-		Participant[] participants = gson.fromJson(response.body(), Participant[].class);
+		Participant[] participants = JSON.fromJson(response.body(), Participant[].class);
 		return Arrays.asList(participants);
 	}
 
 	public boolean joinRoom(long roomID, String password) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
-		String body = new Gson().toJson(new JoinRequest(roomID, password));
+		String body = JSON.toJson(new JoinRequest(roomID, password));
 		HttpResponse<String> response = post("api/v1/room/join", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
 	public boolean inviteToRoom(long roomID, String username) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
-		String body = new Gson().toJson(new InviteRequest(roomID, username));
+		String body = JSON.toJson(new InviteRequest(roomID, username));
 		HttpResponse<String> response = post("api/v1/room/invite", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
 	public boolean leaveRoom(long roomID) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
-		String body = new Gson().toJson(new LeaveRoom(roomID));
+		String body = JSON.toJson(new LeaveRoom(roomID));
 		HttpResponse<String> response = post("api/v1/room/leave", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
 	public boolean updateTitle(long id, String title) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
-		String body = new Gson().toJson(new UpdateTitleRequest(id, title));
+		String body = JSON.toJson(new UpdateTitleRequest(id, title));
 		HttpResponse<String> response = post("api/v1/room/update/title", headers, body);
 		return response != null && response.body().equals("success");
 	}
 
 	public boolean updateDescription(long id, String description) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
-		String body = new Gson().toJson(new UpdateDescriptionRequest(id, description));
+		String body = JSON.toJson(new UpdateDescriptionRequest(id, description));
 		HttpResponse<String> response = post("api/v1/room/update/description", headers, body);
 		return response != null && response.body().equals("success");
 	}
@@ -219,10 +203,7 @@ public class APIRequests {
 		HttpResponse<String> response = get("messages/" + roomID, headers);
 		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
 
-		Gson gson = new GsonBuilder()
-				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-				.create();
-		Message[] messages = gson.fromJson(response.body(), Message[].class);
+		Message[] messages = JSON.fromJson(response.body(), Message[].class);
 		return Arrays.asList(messages);
 	}
 
@@ -235,7 +216,7 @@ public class APIRequests {
 	 * @param consumer    The operation to invoke.
 	 * @param type        The expected type of the object in the payload.
 	 */
-	public <T> void addWSListener(String destination, Consumer<T> consumer, Type type) {
+	public <T> void addWSListener(String destination, Consumer<T> consumer, Class<T> type) {
 		ws.addWSListener(destination, consumer, type);
 	}
 }

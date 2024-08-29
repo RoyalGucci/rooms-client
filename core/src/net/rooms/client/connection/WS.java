@@ -1,8 +1,6 @@
 package net.rooms.client.connection;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
+import net.rooms.client.JSON;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.requests.MessageRequest;
 import net.rooms.client.connection.requests.ParticipationRequest;
@@ -20,7 +18,6 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +32,6 @@ class WS {
 	private final String jSessionID;
 
 	private final SessionHandler handler;
-	private final Gson gson;
 
 	public WS(String domain, String username, String jSessionID) {
 		url = "ws://" + domain + "/ws";
@@ -51,13 +47,9 @@ class WS {
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.add("Cookie", jSessionID);
 		stompClient.connectAsync(url, headers, handler);
-
-		gson = new GsonBuilder()
-				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-				.create();
 	}
 
-	public <T> void addWSListener(String destination, Consumer<T> consumer, Type type) {
+	public <T> void addWSListener(String destination, Consumer<T> consumer, Class<T> type) {
 		destination = "/user/" + username + "/queue/" + destination;
 		StompFrameHandler frameHandler = new StompFrameHandler() {
 			@Override
@@ -67,7 +59,7 @@ class WS {
 
 			@Override
 			public void handleFrame(@NonNull StompHeaders headers, Object payload) {
-				T frame = gson.fromJson((String) payload, type);
+				T frame = JSON.fromJson((String) payload, type);
 				consumer.accept(frame);
 			}
 		};
@@ -80,17 +72,17 @@ class WS {
 
 	public void message(long roomID, MessageType type, String content) {
 		MessageRequest messageRequest = new MessageRequest(roomID, type, content, jSessionID);
-		handler.send("/app/message", gson.toJson(messageRequest));
+		handler.send("/app/message", JSON.toJson(messageRequest));
 	}
 
 	public void joinGame(long id) {
 		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		handler.send("/game/join", gson.toJson(participationRequest));
+		handler.send("/game/join", JSON.toJson(participationRequest));
 	}
 
 	public void leaveGame(long id) {
 		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		handler.send("/game/leave", gson.toJson(participationRequest));
+		handler.send("/game/leave", JSON.toJson(participationRequest));
 	}
 
 	private static class SessionHandler extends StompSessionHandlerAdapter {
