@@ -16,6 +16,8 @@ import net.rooms.client.connection.requests.SignupRequest;
 import net.rooms.client.connection.requests.UpdateDescriptionRequest;
 import net.rooms.client.connection.requests.UpdateTitleRequest;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -27,16 +29,31 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.function.Consumer;
 
 public class APIRequests {
 
 	private String jSessionID = "";
 	private String username = "";
-	@SuppressWarnings("FieldCanBeLocal")
-	private final String domain = "http://localhost:8080/"; // TODO: load from file
+	private final String domain;
+	private final String url;
 
 	private WS ws;
+
+	public APIRequests() {
+		String domain;
+		File configFile = new File("config.cfg");
+		try {
+			Scanner scanner = new Scanner(configFile);
+			domain = scanner.next();
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			domain = "localhost:8080";
+		}
+		this.domain = domain;
+		url = "http://" + domain + "/";
+	}
 
 	public String getUsername() {
 		return username;
@@ -45,7 +62,7 @@ public class APIRequests {
 	private HttpResponse<String> get(String endpoint, String[][] headers) {
 		try (HttpClient client = HttpClient.newHttpClient()) {
 			HttpRequest.Builder builder = HttpRequest.newBuilder();
-			builder.uri(new URI(domain + endpoint));
+			builder.uri(new URI(url + endpoint));
 			for (String[] header : headers)
 				builder.header(header[0], header[1]);
 			HttpRequest request = builder.build();
@@ -59,7 +76,7 @@ public class APIRequests {
 	private HttpResponse<String> post(String endpoint, String[][] headers, String body) {
 		try (HttpClient client = HttpClient.newHttpClient()) {
 			HttpRequest.Builder builder = HttpRequest.newBuilder();
-			builder.uri(new URI(domain + endpoint));
+			builder.uri(new URI(url + endpoint));
 			for (String[] header : headers)
 				builder.header(header[0], header[1]);
 			HttpRequest request = builder.POST(HttpRequest.BodyPublishers.ofString(body)).build();
@@ -86,7 +103,7 @@ public class APIRequests {
 		if (response == null || response.body() == null || response.body().isEmpty())
 			return false; // No 404, auth failed
 
-		ws = new WS(username, jSessionID);
+		ws = new WS(domain, username, jSessionID);
 		return true;
 	}
 

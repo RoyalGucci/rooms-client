@@ -30,14 +30,15 @@ import java.util.function.Consumer;
 class WS {
 
 	@SuppressWarnings("FieldCanBeLocal")
-	private final String url = "ws://localhost:8080/ws"; // TODO: load from file
+	private final String url;
 	private final String username;
 	private final String jSessionID;
 
 	private final SessionHandler handler;
 	private final Gson gson;
 
-	public WS(String username, String jSessionID) {
+	public WS(String domain, String username, String jSessionID) {
+		url = "ws://" + domain + "/ws";
 		this.username = username;
 		this.jSessionID = jSessionID;
 
