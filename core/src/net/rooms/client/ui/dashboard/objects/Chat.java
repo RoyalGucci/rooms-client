@@ -85,7 +85,7 @@ public class Chat extends Table {
 		gameMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				//TODO: CREATE A GAME MANU WINDOW
+				getStage().addActor(new CreateGameWindow(screen, skin));
 			}
 		});
 
