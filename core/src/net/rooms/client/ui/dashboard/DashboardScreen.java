@@ -119,6 +119,13 @@ public class DashboardScreen implements Screen {
 		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
 	}
 
+	private void startGameListener(Message message) {
+		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
+		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
+		// TODO start the game for participants. See update::participants
+	}
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
@@ -148,13 +155,14 @@ public class DashboardScreen implements Screen {
 	}
 
 	public void loadDashboard() {
-		client.getApiRequests().addWSListener("messages", this::massagesListener, Message.class);
-		client.getApiRequests().addWSListener("description", this::roomDetailsListener, Room.class);
-		client.getApiRequests().addWSListener("title", this::roomDetailsListener, Room.class);
-		client.getApiRequests().addWSListener("join", this::joinListener, Participant.class);
-		client.getApiRequests().addWSListener("leave", this::leaveListener, Participant.class);
-		client.getApiRequests().addWSListener("game/join", this::joinGameListener, Message.class);
-		client.getApiRequests().addWSListener("game/leave", this::leaveGameListener, Message.class);
+		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
+		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
+		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
+		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
+		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
+		client.getApiRequests().setWSListener("game/join", this::joinGameListener, Message.class);
+		client.getApiRequests().setWSListener("game/leave", this::leaveGameListener, Message.class);
+		client.getApiRequests().setWSListener("game/start", this::startGameListener, Message.class);
 
 		chat.setInteractive(false);
 	}

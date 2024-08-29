@@ -1,9 +1,6 @@
 package net.rooms.client.connection;
 
 import net.rooms.client.JSON;
-import net.rooms.client.connection.objects.MessageType;
-import net.rooms.client.connection.requests.MessageRequest;
-import net.rooms.client.connection.requests.ParticipationRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -19,6 +16,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -26,17 +24,13 @@ import java.util.function.Consumer;
 
 class WS {
 
-	@SuppressWarnings("FieldCanBeLocal")
-	private final String url;
 	private final String username;
-	private final String jSessionID;
 
 	private final SessionHandler handler;
+	private final HashMap<String, StompSession.Subscription> subscriptions;
 
-	public WS(String domain, String username, String jSessionID) {
-		url = "ws://" + domain + "/ws";
+	public WS(String username, String domain, String jSessionID) {
 		this.username = username;
-		this.jSessionID = jSessionID;
 
 		List<Transport> transports = Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()));
 		SockJsClient sockJsClient = new SockJsClient(transports);
@@ -46,11 +40,12 @@ class WS {
 		handler = new SessionHandler();
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.add("Cookie", jSessionID);
-		stompClient.connectAsync(url, headers, handler);
+		stompClient.connectAsync("ws://" + domain + "/ws", headers, handler);
+		subscriptions = new HashMap<>();
 	}
 
-	public <T> void addWSListener(String destination, Consumer<T> consumer, Class<T> type) {
-		destination = "/user/" + username + "/queue/" + destination;
+	public <T> void setWSListener(String destination, Consumer<T> consumer, Class<T> type) {
+		String fullDestination = "/user/" + username + "/queue/" + destination;
 		StompFrameHandler frameHandler = new StompFrameHandler() {
 			@Override
 			public @NonNull Type getPayloadType(@NonNull StompHeaders headers) {
@@ -64,25 +59,21 @@ class WS {
 			}
 		};
 		if (handler.session == null) {
-			handler.listenerQueue.add(new Object[]{destination, frameHandler});
+			handler.listenerQueue.add(new Object[]{fullDestination, frameHandler});
 			return;
 		}
-		handler.session.subscribe(destination, frameHandler);
+		if (subscriptions.containsKey(destination)) subscriptions.get(destination).unsubscribe();
+		subscriptions.put(destination, handler.session.subscribe(fullDestination, frameHandler));
 	}
 
-	public void message(long roomID, MessageType type, String content) {
-		MessageRequest messageRequest = new MessageRequest(roomID, type, content, jSessionID);
-		handler.send("/app/message", JSON.toJson(messageRequest));
+	public void removeWSListener(String destination) {
+		if (!subscriptions.containsKey(destination)) return;
+
+		subscriptions.remove(destination).unsubscribe();
 	}
 
-	public void joinGame(long id) {
-		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		handler.send("/game/join", JSON.toJson(participationRequest));
-	}
-
-	public void leaveGame(long id) {
-		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		handler.send("/game/leave", JSON.toJson(participationRequest));
+	public void send(String destination, String payload) {
+		handler.send(destination, payload);
 	}
 
 	private static class SessionHandler extends StompSessionHandlerAdapter {
