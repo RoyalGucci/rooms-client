@@ -5,6 +5,7 @@ import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.Room;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +47,10 @@ public class Repository {
 	) {
 		public RoomEntry(Room room, List<Participant> participants, List<Message> messages) {
 			this(room, hashParticipants(participants), hashMessages(messages));
+		}
+
+		public List<Message> getMessagesSortedByDate() {
+			return messages.values().stream().sorted(Comparator.comparing(Message::sendDate)).toList();
 		}
 
 		private static HashMap<String, Participant> hashParticipants(List<Participant> participants) {
