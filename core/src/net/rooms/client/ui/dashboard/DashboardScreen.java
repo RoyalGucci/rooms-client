@@ -126,6 +126,10 @@ public class DashboardScreen implements Screen {
 		// TODO start the game for participants. See update::participants
 	}
 
+	private void gameResultsListener(Message message) {
+		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+	}
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
@@ -163,6 +167,7 @@ public class DashboardScreen implements Screen {
 		client.getApiRequests().setWSListener("game/join", this::joinGameListener, Message.class);
 		client.getApiRequests().setWSListener("game/leave", this::leaveGameListener, Message.class);
 		client.getApiRequests().setWSListener("game/start", this::startGameListener, Message.class);
+		client.getApiRequests().setWSListener("game/results", this::gameResultsListener, Message.class);
 
 		chat.setInteractive(false);
 	}

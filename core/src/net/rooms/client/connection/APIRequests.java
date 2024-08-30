@@ -232,6 +232,19 @@ public class APIRequests {
 	}
 
 	/**
+	 * Used by a game host to close an ongoing game and submit its results.
+	 * Successful requests would trigger an update on the game/results endpoint to all participants
+	 * of the room where the lobby is present.
+	 *
+	 * @param id      The identifier of the game.
+	 * @param payload Expected to represent the json of the results of the game.
+	 */
+	public void submitGame(long id, String payload) {
+		BroadcastRequest broadcastRequest = new BroadcastRequest(id, payload, jSessionID);
+		ws.send("/game/submit", JSON.toJson(broadcastRequest));
+	}
+
+	/**
 	 * Used by the host to send a payload to all players in a hosted game.
 	 * Will be received by players in game/guest-channel
 	 *
