@@ -126,7 +126,7 @@ public class Chat extends Table {
 		chatContainer.clearChildren();
 		title.setText("");
 		inputField.setText("");
-		screen.getStage().setKeyboardFocus(chatContainer);
+		getStage().setKeyboardFocus(chatContainer);
 	}
 
 	private final class ChatBoxListener extends InputListener {

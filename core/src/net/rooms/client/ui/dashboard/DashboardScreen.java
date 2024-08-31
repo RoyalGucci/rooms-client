@@ -50,10 +50,6 @@ public class DashboardScreen implements Screen {
 		roomsPanel.updateContent(updatedRooms);
 	}
 
-	public Stage getStage() {
-		return stage;
-	}
-
 	public Client getClient() {
 		return client;
 	}
