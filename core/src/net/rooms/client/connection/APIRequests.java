@@ -203,7 +203,7 @@ public class APIRequests {
 	 */
 	public void joinGame(long id) {
 		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		ws.send("/game/join", JSON.toJson(participationRequest));
+		ws.send("/app/game/join", JSON.toJson(participationRequest));
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class APIRequests {
 	 */
 	public void leaveGame(long id) {
 		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		ws.send("/game/leave", JSON.toJson(participationRequest));
+		ws.send("/app/game/leave", JSON.toJson(participationRequest));
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class APIRequests {
 	 */
 	public void startGame(long id) {
 		ParticipationRequest participationRequest = new ParticipationRequest(id, jSessionID);
-		ws.send("/game/start", JSON.toJson(participationRequest));
+		ws.send("/app/game/start", JSON.toJson(participationRequest));
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class APIRequests {
 	 */
 	public void submitGame(long id, String payload) {
 		BroadcastRequest broadcastRequest = new BroadcastRequest(id, payload, jSessionID);
-		ws.send("/game/submit", JSON.toJson(broadcastRequest));
+		ws.send("/app/game/submit", JSON.toJson(broadcastRequest));
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class APIRequests {
 	 */
 	public void sendToGameGuests(long id, String payload) {
 		BroadcastRequest broadcastRequest = new BroadcastRequest(id, payload, jSessionID);
-		ws.send("/game/broadcast", JSON.toJson(broadcastRequest));
+		ws.send("/app/game/broadcast", JSON.toJson(broadcastRequest));
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class APIRequests {
 	 */
 	public void sendToGameHost(long id, String payload) {
 		BroadcastRequest broadcastRequest = new BroadcastRequest(id, payload, jSessionID);
-		ws.send("/game/unicast", JSON.toJson(broadcastRequest));
+		ws.send("/app/game/unicast", JSON.toJson(broadcastRequest));
 	}
 
 	public List<Message> getMessages(long roomID) {
