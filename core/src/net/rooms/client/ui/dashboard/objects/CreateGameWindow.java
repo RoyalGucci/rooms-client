@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import net.rooms.client.JSON;
 import net.rooms.client.connection.objects.MessageType;
 import net.rooms.client.connection.objects.PongConfig;
+import net.rooms.client.games.GameType;
 import net.rooms.client.ui.RoomsWindow;
 import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
@@ -62,7 +63,7 @@ public class CreateGameWindow extends RoomsWindow {
 			public void clicked(InputEvent event, float x, float y) {
 				if (selectedGame.equals("Pong"))
 					// TODO handle winScore
-					screen.getClient().getApiRequests().message(screen.currentRoomID, MessageType.PONG_GAME_OPEN, JSON.toJson(new PongConfig(playerNum, -1)));
+					screen.getClient().getApiRequests().message(screen.currentRoomID, MessageType.PONG_GAME_OPEN, JSON.toJson(new PongConfig(GameType.PONG, playerNum, -1)));
 				// TODO handle more games
 				remove();
 			}

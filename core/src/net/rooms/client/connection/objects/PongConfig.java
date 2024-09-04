@@ -1,5 +1,7 @@
 package net.rooms.client.connection.objects;
 
+import net.rooms.client.games.GameType;
+
 /**
  * Represents a configuration for the game of 'Pong'.
  *
@@ -8,6 +10,7 @@ package net.rooms.client.connection.objects;
  *                   to -1.
  */
 public record PongConfig(
+		GameType type,
 		int maxPlayers,
 		int winScore
 ) implements GameConfig {
