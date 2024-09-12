@@ -1,5 +1,6 @@
 package net.rooms.client.games;
 
 public enum GameType {
-	PONG
+	PONG,
+	SNAKES
 }
