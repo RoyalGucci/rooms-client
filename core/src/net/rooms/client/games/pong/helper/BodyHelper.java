@@ -19,6 +19,7 @@ public class BodyHelper {
         fixtureDef.density = density;
         body.createFixture(fixtureDef).setUserData(type);
 
+
         shape.dispose();
         return body;
     }

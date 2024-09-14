@@ -1,5 +1,5 @@
 package net.rooms.client.games.pong.helper;
 
 public enum ContactType {
-    WALL, BALL ,PLAYER, VERTICALWALL;
+    HORIZONTAL_WALL, BALL , VERTICAL_PLAYER, VERTICAL_WALL, HORIZONTAL_PLAYER, SNAKE_BODY, SNAKE_HEAD, FOOD
 }
