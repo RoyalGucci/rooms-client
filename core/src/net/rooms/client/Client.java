@@ -13,6 +13,7 @@ public class Client extends Game {
 
 	@Override
 	public void create() {
+
 		apiRequests = new APIRequests();
 		screenManager = new ScreenManager(this);
 		screenManager.login();

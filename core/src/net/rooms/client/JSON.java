@@ -2,7 +2,9 @@ package net.rooms.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.rooms.client.connection.adapters.ConfigAdapter;
 import net.rooms.client.connection.adapters.LocalDateTimeAdapter;
+import net.rooms.client.connection.objects.GameConfig;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 public class JSON {
 	private static final Gson gson = new GsonBuilder()
 			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+			.registerTypeAdapter(GameConfig.class, new ConfigAdapter())
 			.create();
 
 	/**

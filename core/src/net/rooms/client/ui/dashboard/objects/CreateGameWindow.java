@@ -22,6 +22,7 @@ import net.rooms.client.ui.dashboard.DashboardScreen;
 public class CreateGameWindow extends RoomsWindow {
 	private String selectedGame = "Pong"; // TODO try to use MessageType enum properties instead
 	private int playerNum = 2;
+	private int winScore = 5;
 
 	public CreateGameWindow(DashboardScreen screen, Skin skin) {
 		super("Create a game", skin);
@@ -41,6 +42,11 @@ public class CreateGameWindow extends RoomsWindow {
 		String[] num = {"2", "3", "4"};
 		playerNumDropdown.setItems(num);
 		table.add(playerNumDropdown).pad(20).row();
+		table.add(new Label("Choose the win score:", skin));
+		SelectBox<String> winScoreDropdown = new SelectBox<>(skin);
+		String[] win = {"5", "10", "15", "20", "25"};
+		winScoreDropdown.setItems(win);
+		table.add(winScoreDropdown).pad(20).row();
 		table.add(createButton).pad(20).colspan(2);
 
 
@@ -58,12 +64,19 @@ public class CreateGameWindow extends RoomsWindow {
 			}
 		});
 
+		winScoreDropdown.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				winScore = Integer.parseInt(winScoreDropdown.getSelected());
+			}
+		});
+
 		createButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (selectedGame.equals("Pong"))
 					// TODO handle winScore
-					screen.getClient().getApiRequests().message(screen.currentRoomID, MessageType.PONG_GAME_OPEN, JSON.toJson(new PongConfig(GameType.PONG, playerNum, -1)));
+					screen.getClient().getApiRequests().message(screen.currentRoomID, MessageType.PONG_GAME_OPEN, JSON.toJson(new PongConfig(GameType.PONG, playerNum, winScore)));
 				// TODO handle more games
 				remove();
 			}

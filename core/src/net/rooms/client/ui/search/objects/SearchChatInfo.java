@@ -5,8 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.PublicRoom;
+import net.rooms.client.connection.objects.Room;
 import net.rooms.client.ui.search.SearchScreen;
+
+import java.util.Optional;
 
 public class SearchChatInfo extends Table {
 
@@ -48,7 +52,12 @@ public class SearchChatInfo extends Table {
 		joinButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				screen.getClient().getApiRequests().joinRoom(current.roomID(), password.getText());
+				if (screen.getClient().getApiRequests().joinRoom(current.roomID(), password.getText())) {
+					Optional<Room> optional = screen.getClient().getApiRequests().getRooms().stream().filter(roomEntry -> roomEntry.roomID() == current.roomID()).findFirst();
+					if (optional.isEmpty()) return;
+					Room room = optional.get();
+					screen.getClient().getRepository().putEntry(new Repository.RoomEntry(room, screen.getClient().getApiRequests().getParticipants(current.roomID()), screen.getClient().getApiRequests().getMessages(room.roomID())));
+				}
 			}
 		});
 	}

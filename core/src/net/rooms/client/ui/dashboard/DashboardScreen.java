@@ -13,6 +13,9 @@ import net.rooms.client.connection.objects.GameUpdate;
 import net.rooms.client.connection.objects.Message;
 import net.rooms.client.connection.objects.Participant;
 import net.rooms.client.connection.objects.Room;
+import net.rooms.client.games.GameScreen;
+import net.rooms.client.games.pong.PongGuestScreen;
+import net.rooms.client.games.pong.PongHostScreen;
 import net.rooms.client.ui.dashboard.objects.Chat;
 import net.rooms.client.ui.dashboard.objects.NavPanel;
 import net.rooms.client.ui.dashboard.objects.RoomsPanel;
@@ -27,6 +30,8 @@ public class DashboardScreen implements Screen {
 	private final RoomsPanel roomsPanel;
 	public long currentRoomID;
 	private final Chat chat;
+
+	private GameScreen gameScreen;
 
 	public DashboardScreen(Client client) {
 		this.client = client;
@@ -79,13 +84,12 @@ public class DashboardScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		client.getApiRequests().getRooms().forEach(this::putRoom);
+		client.getRepository().listEntries().forEach(entry -> roomsPanel.putRoom(entry.room()));
 	}
 
 	private void massagesListener(Message message) {
-		if (currentRoomID == message.roomID())
-			chat.addMessage(message.content(), message.sender(), client.getApiRequests().getUsername().equals(message.sender()));
 		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		chat.addMessage(message);
 	}
 
 	private void roomDetailsListener(Room room) {
@@ -96,6 +100,8 @@ public class DashboardScreen implements Screen {
 	}
 
 	private void joinListener(Participant participant) {
+		if (participant.username().equals(client.getApiRequests().getUsername())) return;
+
 		client.getRepository().getEntry(participant.roomID()).participants().put(participant.username(), participant);
 	}
 
@@ -105,25 +111,42 @@ public class DashboardScreen implements Screen {
 
 	private void joinGameListener(Message message) {
 		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
-		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
-		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
+		chat.addMessage(message);
 	}
 
 	private void leaveGameListener(Message message) {
 		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		chat.addMessage(message);
 		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
-		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
+		if (update.username() == null || gameScreen == null) return;
+
+		if (message.id() == gameScreen.gameID) {
+			gameScreen.onDisconnect(update.username());
+			if (client.getApiRequests().getUsername().equals(update.username())) gameScreen = null;
+		}
 	}
 
 	private void startGameListener(Message message) {
 		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		chat.addMessage(message);
 		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
-		// TODO update related message UI using update and message::type. Use message::type or instanceof to tell update::config actual type
-		// TODO start the game for participants. See update::participants
+		if (!update.participants().contains(client.getApiRequests().getUsername())) return;
+
+		if (message.sender().equals(client.getApiRequests().getUsername()))
+			gameScreen = new PongHostScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		else gameScreen = new PongGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		client.setScreen(gameScreen);
 	}
 
 	private void gameResultsListener(Message message) {
 		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		chat.addMessage(message);
+		if (gameScreen == null) return;
+
+		if (message.id() == gameScreen.gameID) {
+			gameScreen.onDisconnect(client.getApiRequests().getUsername());
+			gameScreen = null;
+		}
 	}
 
 	@Override
@@ -146,7 +169,6 @@ public class DashboardScreen implements Screen {
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override
@@ -155,16 +177,17 @@ public class DashboardScreen implements Screen {
 	}
 
 	public void loadDashboard() {
-		client.getApiRequests().setWSListener("messages", this::massagesListener, Message.class);
-		client.getApiRequests().setWSListener("description", this::roomDetailsListener, Room.class);
-		client.getApiRequests().setWSListener("title", this::roomDetailsListener, Room.class);
-		client.getApiRequests().setWSListener("join", this::joinListener, Participant.class);
-		client.getApiRequests().setWSListener("leave", this::leaveListener, Participant.class);
-		client.getApiRequests().setWSListener("game/join", this::joinGameListener, Message.class);
-		client.getApiRequests().setWSListener("game/leave", this::leaveGameListener, Message.class);
-		client.getApiRequests().setWSListener("game/start", this::startGameListener, Message.class);
-		client.getApiRequests().setWSListener("game/results", this::gameResultsListener, Message.class);
+		client.getApiRequests().setWSListener("messages", (message -> Gdx.app.postRunnable(() -> DashboardScreen.this.massagesListener(message))), Message.class);
+		client.getApiRequests().setWSListener("description", (room -> Gdx.app.postRunnable(() -> DashboardScreen.this.roomDetailsListener(room))), Room.class);
+		client.getApiRequests().setWSListener("title", (room -> Gdx.app.postRunnable(() -> DashboardScreen.this.roomDetailsListener(room))), Room.class);
+		client.getApiRequests().setWSListener("join", (participant -> Gdx.app.postRunnable(() -> DashboardScreen.this.joinListener(participant))), Participant.class);
+		client.getApiRequests().setWSListener("leave", (participant -> Gdx.app.postRunnable(() -> DashboardScreen.this.leaveListener(participant))), Participant.class);
+		client.getApiRequests().setWSListener("game/join", (message -> Gdx.app.postRunnable(() -> DashboardScreen.this.joinGameListener(message))), Message.class);
+		client.getApiRequests().setWSListener("game/leave", (message -> Gdx.app.postRunnable(() -> DashboardScreen.this.leaveGameListener(message))), Message.class);
+		client.getApiRequests().setWSListener("game/start", (message -> Gdx.app.postRunnable(() -> DashboardScreen.this.startGameListener(message))), Message.class);
+		client.getApiRequests().setWSListener("game/results", (message -> Gdx.app.postRunnable(() -> DashboardScreen.this.gameResultsListener(message))), Message.class);
 
+		client.getApiRequests().getRooms().forEach(this::putRoom);
 		chat.setInteractive(false);
 	}
 

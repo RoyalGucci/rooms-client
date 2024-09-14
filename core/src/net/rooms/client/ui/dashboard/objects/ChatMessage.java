@@ -6,20 +6,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 class ChatMessage extends Table {
 	// TODO: add sender details
-	public ChatMessage(String message, String username, boolean me, Skin skin) {
+	public ChatMessage(String message, String username, Skin skin) {
 		Label messageBody = new Label(" " + message, skin);
 		Label author = new Label(" " + username, skin);
 		//author.setStyle(new Label.LabelStyle(new BitmapFont(), Color.BLACK)); //TODO: FIGURE OUT WHY BITMAP FONT DOES PROBLEMS
 		messageBody.setWrap(true);
 		setBackground(skin.newDrawable("white", 0.7f, 0.7f, 0.7f, 1));
-		if (me) {
-			add(author).expandX().left().fillX();
-			row();
-			add(messageBody).expandX().left().fillX();
-		} else {
-			add(author).expandX().right().fillX();
-			row();
-			add(messageBody).expandX().right().fillX();
-		}
+
+		add(author).expandX().left().fillX();
+		row();
+		add(messageBody).expandX().left().fillX();
 	}
 }
