@@ -19,7 +19,9 @@ public class ConfigAdapter implements JsonDeserializer<GameConfig> {
 			case PONG -> {
 				return gson.fromJson(jsonElement, PongConfig.class);
 			}
-			case SNAKES -> gson.fromJson(jsonElement, SnakesConfig.class);
+			case SNAKES -> {
+				return gson.fromJson(jsonElement, SnakesConfig.class);
+			}
 		}
 		return null;
 	}
