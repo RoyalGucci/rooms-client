@@ -143,7 +143,7 @@ public class Chat extends Table {
 	public void setRoom(long roomID) {
 		Repository.RoomEntry current = screen.getRoom(roomID);
 		title.setText(current.room().title());
-		current.messages().forEach((id, message) -> addMessage(message));
+		current.getMessagesSortedByDate().forEach(this::addMessage);
 	}
 
 	public void updateTitle(String title) {
