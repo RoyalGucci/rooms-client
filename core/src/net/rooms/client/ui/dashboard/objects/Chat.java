@@ -16,6 +16,7 @@ import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 import net.rooms.client.ui.dashboard.objects.messages.ChatGameMessage;
 import net.rooms.client.ui.dashboard.objects.messages.ChatPongMessage;
+import net.rooms.client.ui.dashboard.objects.messages.ChatSnakeMessage;
 
 import java.util.HashMap;
 
@@ -125,6 +126,12 @@ public class Chat extends Table {
 			case PONG_GAME_OPEN, PONG_GAME_ONGOING,PONG_GAME_RESULT,PONG_GAME_ABORT -> {
 				chatContainer.row();
 				ChatPongMessage gameMessage = new ChatPongMessage(screen, message, skin);
+				gameMessages.put(message.id(), gameMessage);
+				chatContainer.add(gameMessage).expandX().fillX().pad(5);
+			}
+			case SNAKES_GAME_OPEN, SNAKES_GAME_ONGOING, SNAKES_GAME_RESULT,SNAKES_GAME_ABORT -> {
+				chatContainer.row();
+				ChatSnakeMessage gameMessage = new ChatSnakeMessage(screen, message, skin);
 				gameMessages.put(message.id(), gameMessage);
 				chatContainer.add(gameMessage).expandX().fillX().pad(5);
 			}
