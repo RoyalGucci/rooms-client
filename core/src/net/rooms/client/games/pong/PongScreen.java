@@ -2,6 +2,7 @@ package net.rooms.client.games.pong;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -33,10 +34,15 @@ public class PongScreen extends GameScreen {
 	protected final Player empty;
 	protected final PongConfig config;
 	protected final List<String> participants;
-	private final BitmapFont font;
-	private final GlyphLayout layout;
-	private final float x;
-	private final float y;
+	private final BitmapFont topLeftFont;
+	private final BitmapFont topRightFont;
+	private final BitmapFont bottomLeftFont;
+	private final BitmapFont bottomRightFont;
+	private final GlyphLayout glyphLayoutTopLeft;
+	private final GlyphLayout glyphLayoutTopRight;
+	private final GlyphLayout glyphLayoutBottomLeft;
+	private final GlyphLayout glyphLayoutBottomRight;
+
 
 	public PongScreen(Client client, GameUpdate update, long gameID, String participant, String host) {
 		super(client, update, gameID);
@@ -76,10 +82,19 @@ public class PongScreen extends GameScreen {
 		}
 
 		ball = new Ball(this);
-		font = new BitmapFont();
-		layout = new GlyphLayout(font, "");
-		x = (PONG_SCREEN_SIZE - layout.width) / 2;
-		y = (PONG_SCREEN_SIZE + layout.height) / 2;
+		glyphLayoutTopLeft = new GlyphLayout();
+		glyphLayoutTopRight = new GlyphLayout();
+		glyphLayoutBottomLeft = new GlyphLayout();
+		glyphLayoutBottomRight = new GlyphLayout();
+		topLeftFont = new BitmapFont();
+		topRightFont = new BitmapFont();
+		bottomLeftFont = new BitmapFont();
+		bottomRightFont = new BitmapFont();
+		topLeftFont.setColor(Color.GREEN);
+		topRightFont.setColor(Color.GREEN);
+		bottomLeftFont.setColor(Color.GREEN);
+		bottomRightFont.setColor(Color.GREEN);
+
 	}
 
 	@Override
@@ -90,6 +105,20 @@ public class PongScreen extends GameScreen {
 	@Override
 	public void update() {
 		super.update();
+		Player player;
+		player = playersBySide.get(Wall.WallSide.LEFT);
+		glyphLayoutTopLeft.setText(topLeftFont, player.getUsername() + " = " + player.getScore());
+		if(participants.size() > 3) {
+			player = playersBySide.get(Wall.WallSide.TOP);
+			glyphLayoutTopRight.setText(topRightFont, player.getUsername() + " = " + player.getScore());
+		}
+		if(participants.size() > 2) {
+			player = playersBySide.get(Wall.WallSide.BOTTOM);
+			glyphLayoutBottomLeft.setText(bottomLeftFont, player.getUsername() + " = " + player.getScore());
+		}
+		player = playersBySide.get(Wall.WallSide.RIGHT);
+		glyphLayoutBottomRight.setText(bottomRightFont, player.getUsername() + " = " + player.getScore());
+
 		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) client.getApiRequests().leaveGame(gameID);
 	}
 
@@ -104,11 +133,15 @@ public class PongScreen extends GameScreen {
 		super.render();
 		viewport.apply();
 
+
 		batch.begin();
 		ball.render(batch);
 		players.values().forEach(player -> player.render(batch));
 		walls.values().forEach(wall -> wall.render(batch));
-		font.draw(batch, layout, x, y);
+		topLeftFont.draw(batch, glyphLayoutTopLeft, 40, PONG_SCREEN_SIZE - 40);
+		topRightFont.draw(batch, glyphLayoutTopRight, PONG_SCREEN_SIZE - 80, PONG_SCREEN_SIZE - 40);
+		bottomLeftFont.draw(batch, glyphLayoutBottomLeft, 40, 40);
+		bottomRightFont.draw(batch, glyphLayoutBottomRight, PONG_SCREEN_SIZE - 80, 40);
 		batch.end();
 	}
 
@@ -141,7 +174,6 @@ public class PongScreen extends GameScreen {
 	}
 
 	public void winner(String username) {
-		layout.setText(font, "winner:" + username);
 		ball.setActive(false);
 	}
 

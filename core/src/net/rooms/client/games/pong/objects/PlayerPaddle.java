@@ -87,4 +87,8 @@ public abstract class PlayerPaddle {
 	public void setAlive(boolean alive) {
 		this.alive = alive;
 	}
+
+	public int getScore() {
+		return score;
+	}
 }
