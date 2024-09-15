@@ -10,6 +10,7 @@ import net.rooms.client.Client;
 import net.rooms.client.connection.objects.GameUpdate;
 import net.rooms.client.connection.objects.PongConfig;
 import net.rooms.client.games.GameScreen;
+import net.rooms.client.games.pong.helper.ColorTypes;
 import net.rooms.client.games.pong.helper.ContactType;
 import net.rooms.client.games.pong.objects.Ball;
 import net.rooms.client.games.pong.objects.Player;
@@ -43,7 +44,7 @@ public class PongScreen extends GameScreen {
 		this.host = host;
 		config = (PongConfig) update.config();
 		winScore = config.winScore();
-		empty = new Player(0, 0, this, "", ContactType.VERTICAL_PLAYER);
+		empty = new Player(0, 0, this, "", ContactType.VERTICAL_PLAYER, ColorTypes.GREEN);
 		empty.setActive(false);
 		viewport = new FitViewport(PONG_SCREEN_SIZE, PONG_SCREEN_SIZE);
 
@@ -55,11 +56,12 @@ public class PongScreen extends GameScreen {
 				{(float) PONG_SCREEN_SIZE / 2, 16},
 				{(float) PONG_SCREEN_SIZE / 2, PONG_SCREEN_SIZE - 16}};
 		ContactType[] contactTypes = new ContactType[]{ContactType.VERTICAL_PLAYER, ContactType.VERTICAL_PLAYER, ContactType.HORIZONTAL_PLAYER, ContactType.HORIZONTAL_PLAYER};
+		ColorTypes[] colorTypes = new ColorTypes[]{ColorTypes.BLUE, ColorTypes.RED, ColorTypes.GREEN, ColorTypes.GOLD};
 		Wall.WallSide[] wallSides = new Wall.WallSide[]{Wall.WallSide.LEFT, Wall.WallSide.RIGHT, Wall.WallSide.BOTTOM, Wall.WallSide.TOP};
 		participants = update.participants();
 		for (int i = 0; i < participants.size(); i++) {
 			String username = participants.get(i);
-			Player player = new Player(sides[i][0], sides[i][1], this, username, contactTypes[i]);
+			Player player = new Player(sides[i][0], sides[i][1], this, username, contactTypes[i],colorTypes[i]);
 			players.put(username, player);
 			player.setAlive(true);
 			playersBySide.put(wallSides[i], player);

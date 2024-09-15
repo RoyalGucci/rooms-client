@@ -11,7 +11,6 @@ import net.rooms.client.ui.RoomsWindow;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class RoomInfoWindow extends RoomsWindow {
-	//TODO: ADD INFORMATION DISPLAY, DESCRIPTION AND PARTICIPANTS
 	public RoomInfoWindow(DashboardScreen screen, Skin skin) {
 		super("Change Room Details", skin);
 		setSize(500, 300);

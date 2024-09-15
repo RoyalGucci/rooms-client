@@ -42,7 +42,6 @@ public class ChatSnakeMessage extends ChatGameMessage {
 			return;
 		}
 		update = JSON.fromJson(message.content(), GameUpdate.class);
-		System.out.println(update);
 		SnakesConfig config = (SnakesConfig) update.config();
 		ParticipantCountReport.setText(update.participants().size() + " / " + config.maxPlayers());
 		joined = (update.participants() != null && update.participants().contains(username)) || message.sender().equals(username);

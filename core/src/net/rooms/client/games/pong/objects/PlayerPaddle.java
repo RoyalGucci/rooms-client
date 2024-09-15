@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import net.rooms.client.games.pong.PongScreen;
 import net.rooms.client.games.pong.helper.BodyHelper;
+import net.rooms.client.games.pong.helper.ColorTypes;
 import net.rooms.client.games.pong.helper.Const;
 import net.rooms.client.games.pong.helper.ContactType;
 
@@ -19,7 +20,7 @@ public abstract class PlayerPaddle {
 	ContactType contactType;
 	protected boolean alive;
 
-	private PlayerPaddle(float x, float y, ContactType contactType, String username) {
+	private PlayerPaddle(float x, float y, ContactType contactType, String username, ColorTypes colorType) {
 		this.x = x;
 		this.y = y;
 		this.speed = 10;
@@ -32,14 +33,20 @@ public abstract class PlayerPaddle {
 			this.width = 16;
 			this.height = 64;
 		}
-		texture = new Texture("white.png");
+		switch (colorType) {
+			case RED-> texture = new Texture("red.png");
+			case BLUE-> texture = new Texture("blue.png");
+			case GREEN-> texture = new Texture("green.png");
+			case GOLD -> texture = new Texture("gold.png");
+		}
+
 		this.username = username;
 		this.contactType = contactType;
 		alive = false;
 	}
 
-	public PlayerPaddle(float x, float y, PongScreen pongScreen, ContactType contactType, String username) {
-		this(x, y, contactType, username);
+	public PlayerPaddle(float x, float y, PongScreen pongScreen, ContactType contactType, String username, ColorTypes colorType) {
+		this(x, y, contactType, username, colorType);
 		this.pongScreen = pongScreen;
 		body = BodyHelper.createBody(this.x, this.y, this.width, this.height, false, 10000, pongScreen.getWorld(), contactType);
 	}

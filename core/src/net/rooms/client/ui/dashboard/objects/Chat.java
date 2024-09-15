@@ -118,7 +118,7 @@ public class Chat extends Table {
 		bottomPanel.setTouchable(touchable);
 	}
 
-	// TODO: implement methods to add messages by types
+
 	public void addMessage(Message message) {
 		if (screen.currentRoomID != message.roomID()) return;
 		if (gameMessages.containsKey(message.id())) {

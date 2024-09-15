@@ -3,12 +3,13 @@ package net.rooms.client.games.pong.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import net.rooms.client.games.pong.PongScreen;
+import net.rooms.client.games.pong.helper.ColorTypes;
 import net.rooms.client.games.pong.helper.ContactType;
 
 public class Player extends PlayerPaddle {
 
-	public Player(float x, float y, PongScreen pongScreen, String username, ContactType contactType) {
-		super(x, y, pongScreen, contactType, username);
+	public Player(float x, float y, PongScreen pongScreen, String username, ContactType contactType, ColorTypes colorType) {
+		super(x, y, pongScreen, contactType, username,colorType);
 	}
 
 	public void update() {
