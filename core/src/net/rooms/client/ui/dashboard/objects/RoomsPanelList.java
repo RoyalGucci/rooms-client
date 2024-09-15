@@ -1,7 +1,6 @@
 package net.rooms.client.ui.dashboard.objects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -41,8 +40,7 @@ class RoomsPanelList extends Table {
 		TextButton roomRow = roomRows.get(room.roomID());
 		if (roomRow == null) {
 			roomRow = new TextButton(room.title(), skin);
-			scrollTable.add(roomRow).pad(10).fillX().expandX().left();
-			scrollTable.row();
+			scrollTable.add(roomRow).pad(10).fillX().expandX().left().row();
 		} else {
 			roomRow.setText(room.title());
             roomRow.clearListeners();
@@ -61,8 +59,9 @@ class RoomsPanelList extends Table {
 	}
 
 	public void removeRoom(long roomID) {
-		Actor roomRow = roomRows.remove(roomID);
-		scrollTable.removeActor(roomRow);
+		roomRows.remove(roomID);
+		scrollTable.clear();
+		roomRows.values().forEach(roomRow -> scrollTable.add(roomRow).pad(10).fillX().expandX().left().row());
 	}
 
 	public void updateContent(Collection<Repository.RoomEntry> rooms) {

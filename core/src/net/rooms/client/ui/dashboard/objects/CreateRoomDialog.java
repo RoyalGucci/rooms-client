@@ -24,7 +24,6 @@ public class CreateRoomDialog extends RoomsWindow {
 		TextField passwordField = new TextField("", skin);
 		passwordField.setMessageText("password");
 		TextButton create = new TextButton("create", skin);
-		passwordField.setDisabled(true);
 		CheckBox disableCheckBox = new CheckBox("", skin);
 
 		add(titleField).pad(10);
@@ -38,11 +37,6 @@ public class CreateRoomDialog extends RoomsWindow {
 		add(disableCheckBox);
 		row();
 		add(create).pad(10);
-
-		disableCheckBox.addListener(event -> {
-			passwordField.setDisabled(!disableCheckBox.isChecked());
-			return false;
-		});
 
 		create.addListener(new ClickListener() {
 			@Override
