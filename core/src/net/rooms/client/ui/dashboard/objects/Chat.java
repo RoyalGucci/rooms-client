@@ -50,8 +50,11 @@ public class Chat extends Table {
 		ImageButton participants = new ImageButton(new TextureRegionDrawable(texture2));
 		Texture texture3 = new Texture(Gdx.files.internal("settings.png"));
 		ImageButton settings = new ImageButton(new TextureRegionDrawable(texture3));
+		Texture texture4 = new Texture(Gdx.files.internal("addPlayer.png"));
+		ImageButton addPlayer = new ImageButton(new TextureRegionDrawable(texture4));
 		upperPanel.setBackground(skin.newDrawable("white", 0.9f, 0.9f, 0.9f, 1));
 		upperPanel.add(title).expandX().left().pad(10);
+		upperPanel.add(addPlayer).right().pad(10);
 		upperPanel.add(settings).right().pad(10);
 		upperPanel.add(participants).right().pad(10);
 		upperPanel.add(gameMenu).right().pad(10);
@@ -78,6 +81,13 @@ public class Chat extends Table {
 		add(bottomPanel).height(60).expandX().fillX().bottom();
 
 		chatContainer.addListener(new ScrollListener(chatContainer));
+
+		addPlayer.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				getStage().addActor(new AddPlayerWindow(screen, skin));
+			}
+		});
 
 		settings.addListener(new ClickListener() {
 			@Override
