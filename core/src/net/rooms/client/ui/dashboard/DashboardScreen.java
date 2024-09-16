@@ -9,13 +9,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import net.rooms.client.Client;
 import net.rooms.client.JSON;
 import net.rooms.client.Repository;
-import net.rooms.client.connection.objects.GameUpdate;
-import net.rooms.client.connection.objects.Message;
-import net.rooms.client.connection.objects.Participant;
-import net.rooms.client.connection.objects.Room;
+import net.rooms.client.connection.objects.*;
 import net.rooms.client.games.GameScreen;
 import net.rooms.client.games.pong.PongGuestScreen;
 import net.rooms.client.games.pong.PongHostScreen;
+import net.rooms.client.games.snake.SnakeGuestScreen;
+import net.rooms.client.games.snake.SnakeHostScreen;
 import net.rooms.client.ui.dashboard.objects.Chat;
 import net.rooms.client.ui.dashboard.objects.NavPanel;
 import net.rooms.client.ui.dashboard.objects.RoomsPanel;
@@ -132,9 +131,17 @@ public class DashboardScreen implements Screen {
 		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
 		if (!update.participants().contains(client.getApiRequests().getUsername())) return;
 
-		if (message.sender().equals(client.getApiRequests().getUsername()))
-			gameScreen = new PongHostScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
-		else gameScreen = new PongGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		if(message.type() == MessageType.PONG_GAME_ONGOING){
+			if (message.sender().equals(client.getApiRequests().getUsername()))
+				gameScreen = new PongHostScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+			else gameScreen = new PongGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		}
+		else if (message.type() == MessageType.SNAKES_GAME_ONGOING){
+			if (message.sender().equals(client.getApiRequests().getUsername()))
+				gameScreen = new SnakeHostScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+			else gameScreen = new SnakeGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		}
+
 		client.setScreen(gameScreen);
 	}
 
