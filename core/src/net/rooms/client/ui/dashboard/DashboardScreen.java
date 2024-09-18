@@ -22,6 +22,7 @@ import net.rooms.client.ui.dashboard.objects.RoomsPanel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DashboardScreen implements Screen {
 
@@ -100,7 +101,11 @@ public class DashboardScreen implements Screen {
 	}
 
 	private void joinListener(Participant participant) {
-		if (participant.username().equals(client.getApiRequests().getUsername())) return;
+		if (participant.username().equals(client.getApiRequests().getUsername())) {
+			Optional<Room> optional = client.getApiRequests().getRooms().stream().filter(room -> room.roomID() == participant.roomID()).findFirst();
+			optional.ifPresent(this::putRoom);
+			return;
+		}
 
 		client.getRepository().getEntry(participant.roomID()).participants().put(participant.username(), participant);
 	}
@@ -134,7 +139,8 @@ public class DashboardScreen implements Screen {
 
 		if (message.sender().equals(client.getApiRequests().getUsername()))
 			gameScreen = new PongHostScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
-		else gameScreen = new PongGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		else
+			gameScreen = new PongGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
 		client.setScreen(gameScreen);
 	}
 

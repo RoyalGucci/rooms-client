@@ -42,7 +42,7 @@ public class CreateRoomDialog extends RoomsWindow {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				Room room = screen.getClient().getApiRequests().createRoom(titleField.getText(), descriptionField.getText(), disableCheckBox.isChecked(), passwordField.getText());
-				screen.putRoom(room);
+				if (room != null) screen.putRoom(room);
 				remove();
 			}
 		});

@@ -37,6 +37,7 @@ public class APIRequests {
 	private String username = "";
 	private final String domain;
 	private final String url;
+	private Runnable onDisconnect;
 
 	private WS ws;
 
@@ -56,6 +57,11 @@ public class APIRequests {
 
 	public String getUsername() {
 		return username;
+	}
+
+	public void setOnDisconnect(Runnable runnable) {
+		onDisconnect = runnable;
+		if (ws != null) ws.setOnDisconnect(runnable);
 	}
 
 	private HttpResponse<String> get(String endpoint, String[][] headers) {
@@ -103,6 +109,7 @@ public class APIRequests {
 			return false; // No 404, auth failed
 
 		ws = new WS(username, domain, jSessionID);
+		ws.setOnDisconnect(onDisconnect);
 		return true;
 	}
 
@@ -122,7 +129,10 @@ public class APIRequests {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		String body = JSON.toJson(new CreateRequest(title, description, isPrivate, password));
 		HttpResponse<String> response = post("api/v1/room/create", headers, body);
-		if (response == null) return null;
+		if (response == null) {
+			onDisconnect.run();
+			return null;
+		}
 
 		return JSON.fromJson(response.body(), Room.class);
 	}
@@ -130,7 +140,10 @@ public class APIRequests {
 	public List<Room> getRooms() {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		HttpResponse<String> response = get("api/v1/room/list", headers);
-		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
+		if (response == null || response.body() == null || response.body().isEmpty()) {
+			onDisconnect.run();
+			return new ArrayList<>();
+		}
 
 		Room[] rooms = JSON.fromJson(response.body(), Room[].class);
 		return Arrays.asList(rooms);
@@ -139,7 +152,10 @@ public class APIRequests {
 	public List<PublicRoom> searchPublicRooms(String titlePrefix) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		HttpResponse<String> response = get("api/v1/room/search/" + titlePrefix, headers);
-		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
+		if (response == null || response.body() == null || response.body().isEmpty()) {
+			onDisconnect.run();
+			return new ArrayList<>();
+		}
 
 		PublicRoom[] rooms = JSON.fromJson(response.body(), PublicRoom[].class);
 		return Arrays.asList(rooms);
@@ -148,7 +164,10 @@ public class APIRequests {
 	public List<Participant> getParticipants(long roomID) {
 		String[][] headers = {{"Content-Type", "application/json"}, {"Cookie", jSessionID}};
 		HttpResponse<String> response = get("api/v1/room/" + roomID + "/participants", headers);
-		if (response == null || response.body() == null || response.body().isEmpty()) return new ArrayList<>();
+		if (response == null || response.body() == null || response.body().isEmpty()) {
+			onDisconnect.run();
+			return new ArrayList<>();
+		}
 
 		Participant[] participants = JSON.fromJson(response.body(), Participant[].class);
 		return Arrays.asList(participants);

@@ -28,6 +28,7 @@ class WS {
 
 	private final SessionHandler handler;
 	private final HashMap<String, StompSession.Subscription> subscriptions;
+	private Runnable onDisconnect;
 
 	public WS(String username, String domain, String jSessionID) {
 		this.username = username;
@@ -72,11 +73,15 @@ class WS {
 		subscriptions.remove(destination).unsubscribe();
 	}
 
+	public void setOnDisconnect(Runnable onDisconnect) {
+		this.onDisconnect = onDisconnect;
+	}
+
 	public void send(String destination, String payload) {
 		handler.send(destination, payload);
 	}
 
-	private static class SessionHandler extends StompSessionHandlerAdapter {
+	private class SessionHandler extends StompSessionHandlerAdapter {
 
 		StompSession session;
 		Queue<String[]> sendQueue = new LinkedList<>();
@@ -96,6 +101,10 @@ class WS {
 		public void send(String destination, String payload) {
 			if (session == null) {
 				sendQueue.add(new String[]{destination, payload});
+				return;
+			}
+			if (!session.isConnected()) {
+				WS.this.onDisconnect.run();
 				return;
 			}
 			session.send(destination, payload);

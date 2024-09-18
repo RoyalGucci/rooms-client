@@ -31,7 +31,10 @@ public class ScreenManager {
 	}
 
 	public void login() {
-		if (dashboard.equals(client.getScreen())) dashboard.unloadDashboard();
+		if (dashboard.equals(client.getScreen()) || search.equals(client.getScreen())) {
+			dashboard.unloadDashboard();
+			search.hide();
+		}
 		client.setScreen(login);
 	}
 

@@ -18,6 +18,11 @@ public class Client extends Game {
 		screenManager = new ScreenManager(this);
 		screenManager.login();
 		repository = new Repository();
+
+		apiRequests.setOnDisconnect(() -> {
+			screenManager.login();
+			repository.clear();
+		});
 	}
 
 	@Override
