@@ -44,7 +44,7 @@ public class Client extends Game {
 		return screenManager;
 	}
 
-	public Repository getRepository() { // TODO Use everywhere to store and access user data
+	public Repository getRepository() {
 		return repository;
 	}
 }

@@ -30,12 +30,6 @@ public class SearchNavPanel extends Table {
 				screen.getClient().getRepository().clear();
 			}
 		});
-		search.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				//TODO: IMPLEMENT NEW SCREEN
-			}
-		});
 		dashboard.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {

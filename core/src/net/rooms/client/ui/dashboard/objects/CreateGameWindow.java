@@ -16,7 +16,7 @@ import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
 public class CreateGameWindow extends RoomsWindow {
-	private String selectedGame = "Pong"; // TODO try to use MessageType enum properties instead
+	private String selectedGame = "Pong";
 	private int playerNum = 2;
 	private int winScore = 5;
 
