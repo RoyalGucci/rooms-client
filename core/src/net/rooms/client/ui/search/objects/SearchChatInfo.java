@@ -4,7 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.PublicRoom;
@@ -48,7 +53,7 @@ public class SearchChatInfo extends Table {
 		chatContainer.row();
 		chatContainer.add(new Label(current.description(), skin)).pad(20);
 		chatContainer.row();
-		if(current.hasPassword()) {
+		if (current.hasPassword()) {
 			chatContainer.add(password).pad(20);
 			chatContainer.row();
 		}
@@ -65,9 +70,8 @@ public class SearchChatInfo extends Table {
 					Room room = optional.get();
 					screen.getClient().getRepository().putEntry(new Repository.RoomEntry(room, screen.getClient().getApiRequests().getParticipants(current.roomID()), screen.getClient().getApiRequests().getMessages(room.roomID())));
 					info.setText("Joined successfully");
-				}
-				else{
-					info.setText("Error, You are not connected to the room");
+				} else {
+					info.setText("Error, Could not join");
 				}
 
 			}
