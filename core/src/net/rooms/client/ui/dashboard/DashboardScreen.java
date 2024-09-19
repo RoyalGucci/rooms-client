@@ -120,7 +120,9 @@ public class DashboardScreen implements Screen {
 	}
 
 	private void leaveGameListener(Message message) {
-		client.getRepository().getEntry(message.roomID()).messages().put(message.id(), message);
+		Repository.RoomEntry entry = client.getRepository().getEntry(message.roomID());
+		if (entry == null) return;
+		entry.messages().put(message.id(), message);
 		chat.addMessage(message);
 		GameUpdate update = JSON.fromJson(message.content(), GameUpdate.class);
 		if (update.username() == null || gameScreen == null) return;
