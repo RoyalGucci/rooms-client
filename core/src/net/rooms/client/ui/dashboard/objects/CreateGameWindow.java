@@ -30,7 +30,7 @@ public class CreateGameWindow extends RoomsWindow {
 		TextButton createButton = new TextButton("Create", skin);
 		table.add(new Label("Choose a game:", skin));
 		SelectBox<String> gamesDropdown = new SelectBox<>(skin); // 'skin' is your UI skin
-		String[] options = {"Pong", "Snakes", "Tanks"};
+		String[] options = {"Pong"};
 		gamesDropdown.setItems(options);
 		table.add(gamesDropdown).pad(20).row();
 		table.add(new Label("Choose amount of players:", skin));
