@@ -2,6 +2,7 @@ package net.rooms.client;
 
 import net.rooms.client.ui.dashboard.DashboardScreen;
 import net.rooms.client.ui.login.LoginScreen;
+import net.rooms.client.ui.search.SearchScreen;
 import net.rooms.client.ui.signup.SignupScreen;
 
 public class ScreenManager {
@@ -11,6 +12,7 @@ public class ScreenManager {
 	private final LoginScreen login;
 	private final SignupScreen signup;
 	private final DashboardScreen dashboard;
+	private final SearchScreen search;
 
 	public ScreenManager(Client client) {
 		this.client = client;
@@ -18,15 +20,21 @@ public class ScreenManager {
 		login = new LoginScreen(client);
 		signup = new SignupScreen(client);
 		dashboard = new DashboardScreen(client);
+		search = new SearchScreen(client);
 	}
 
 	public void dispose() {
 		login.dispose();
 		signup.dispose();
 		dashboard.dispose();
+		search.dispose();
 	}
 
 	public void login() {
+		if (dashboard.equals(client.getScreen()) || search.equals(client.getScreen())) {
+			dashboard.unloadDashboard();
+			search.hide();
+		}
 		client.setScreen(login);
 	}
 
@@ -34,9 +42,16 @@ public class ScreenManager {
 		client.setScreen(signup);
 	}
 
+	public void search() {
+		client.setScreen(search);
+	}
+
 	public void dashboard() {
-		login.resetContent();
-		signup.resetContent();
+		if (login.equals(client.getScreen()) || signup.equals(client.getScreen())){
+			login.resetContent();
+			signup.resetContent();
+			dashboard.loadDashboard();
+		}
 		client.setScreen(dashboard);
 	}
 }

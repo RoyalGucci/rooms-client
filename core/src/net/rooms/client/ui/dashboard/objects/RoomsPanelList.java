@@ -7,11 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import net.rooms.client.Repository;
 import net.rooms.client.connection.objects.Room;
+import net.rooms.client.ui.ScrollListener;
 import net.rooms.client.ui.dashboard.DashboardScreen;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 class RoomsPanelList extends Table {
 
@@ -24,39 +26,47 @@ class RoomsPanelList extends Table {
 		this.screen = screen;
 		this.roomRows = new HashMap<>();
 		skin = new Skin(Gdx.files.internal("skin-composer\\skin\\skin-composer-ui.json"));
-		scrollTable = new Table();
-		scrollTable.top().left();
 		setBackground(skin.newDrawable("white", 0.2f, 0.2f, 0.2f, 1));
 
+		scrollTable = new Table();
+		scrollTable.top().left();
 		ScrollPane scrollPane = new ScrollPane(scrollTable, skin);
 		scrollPane.setFadeScrollBars(false);
 		add(scrollPane).expand().fill();
+		addListener(new ScrollListener(scrollTable));
 	}
 
 	public void putRoom(Room room) {
 		TextButton roomRow = roomRows.get(room.roomID());
 		if (roomRow == null) {
 			roomRow = new TextButton(room.title(), skin);
-			scrollTable.add(roomRow).pad(10).fillX().expandX().left();
-			scrollTable.row();
+			scrollTable.add(roomRow).pad(10).fillX().expandX().left().row();
 		} else {
 			roomRow.setText(room.title());
-			screen.getChat().setRoom(room);
             roomRow.clearListeners();
         }
 
 		roomRow.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				screen.getChat().setRoom(room);
 				screen.currentRoomID = room.roomID();
+				screen.getChat().resetContent();
+				screen.getChat().setRoom(screen.currentRoomID);
+				screen.getChat().setInteractive(true);
 			}
 		});
 		roomRows.put(room.roomID(), roomRow);
 	}
 
-	public void updateContent(List<Room> rooms) {
-		for (Room room : rooms) putRoom(room);
+	public void removeRoom(long roomID) {
+		roomRows.remove(roomID);
+		scrollTable.clear();
+		roomRows.values().forEach(roomRow -> scrollTable.add(roomRow).pad(10).fillX().expandX().left().row());
+	}
+
+	public void updateContent(Collection<Repository.RoomEntry> rooms) {
+		resetContent();
+		for (Repository.RoomEntry room : rooms) putRoom(room.room());
 	}
 
 	public void resetContent() {

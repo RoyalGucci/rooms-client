@@ -1,0 +1,5 @@
+package net.rooms.client.games.pong.helper;
+
+public enum ContactType {
+    HORIZONTAL_WALL, BALL , VERTICAL_PLAYER, VERTICAL_WALL, HORIZONTAL_PLAYER, OBSTACLE_VERTICAL, OBSTACLE_HORIZONTAL, SNAKE_HEAD, FOOD
+}

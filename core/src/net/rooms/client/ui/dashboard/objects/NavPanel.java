@@ -16,16 +16,37 @@ public class NavPanel extends Table {
 		top().left();
 		setBackground(skin.newDrawable("white", 0.3f, 0.3f, 0.3f, 1));
 
-		Texture texture = new Texture(Gdx.files.internal("settings-icon-size_32.png"));
+		Texture texture = new Texture(Gdx.files.internal("door.png"));
 		ImageButton logout = new ImageButton(new TextureRegionDrawable(texture));
+		Texture texture2 = new Texture(Gdx.files.internal("search.png"));
+		ImageButton search = new ImageButton(new TextureRegionDrawable(texture2));
+		Texture texture3 = new Texture(Gdx.files.internal("dashboard.png"));
+		ImageButton dashboard = new ImageButton(new TextureRegionDrawable(texture3));
 		logout.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				screen.getClient().getScreenManager().login();
+				screen.getClient().getApiRequests().logout();
+				screen.getClient().getRepository().clear();
 			}
 		});
-		add(logout).pad(10).left();
+		search.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				screen.getClient().getScreenManager().search();
+			}
+		});
+		dashboard.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				screen.getClient().getScreenManager().dashboard();
+			}
+		});
+		add(logout).pad(5).left();
 		row();
-
+		add(search).padTop(20).left();
+		row();
+		add(dashboard).padTop(20).padLeft(5).left();
+		row();
 	}
 }
