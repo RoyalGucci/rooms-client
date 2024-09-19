@@ -143,6 +143,7 @@ public class DashboardScreen implements Screen {
 			gameScreen = new PongHostScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
 		else
 			gameScreen = new PongGuestScreen(client, update, message.id(), client.getApiRequests().getUsername(), message.sender());
+		stage.setKeyboardFocus(null);
 		client.setScreen(gameScreen);
 	}
 
