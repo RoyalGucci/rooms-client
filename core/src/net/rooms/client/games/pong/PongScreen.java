@@ -106,17 +106,17 @@ public class PongScreen extends GameScreen {
 	public void update() {
 		super.update();
 		Player player;
-		player = playersBySide.get(Wall.WallSide.LEFT);
+		player = getPlayer(Wall.WallSide.LEFT);
 		glyphLayoutTopLeft.setText(topLeftFont, player.getUsername() + " = " + player.getScore());
 		if(participants.size() > 3) {
-			player = playersBySide.get(Wall.WallSide.TOP);
+			player = getPlayer(Wall.WallSide.TOP);
 			glyphLayoutTopRight.setText(topRightFont, player.getUsername() + " = " + player.getScore());
 		}
 		if(participants.size() > 2) {
-			player = playersBySide.get(Wall.WallSide.BOTTOM);
+			player = getPlayer(Wall.WallSide.BOTTOM);
 			glyphLayoutBottomLeft.setText(bottomLeftFont, player.getUsername() + " = " + player.getScore());
 		}
-		player = playersBySide.get(Wall.WallSide.RIGHT);
+		player = getPlayer(Wall.WallSide.RIGHT);
 		glyphLayoutBottomRight.setText(bottomRightFont, player.getUsername() + " = " + player.getScore());
 
 		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) client.getApiRequests().leaveGame(gameID);
