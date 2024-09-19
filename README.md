@@ -37,6 +37,8 @@ communication between users. For the server component see
    ```
    192.168.1.10:8080
    ```
+   Under some circumstances (such as running from an IDE), the file should be placed under the
+   root of the project `/`.
 4. **Start the client:**
     ```shell
     ./gradlew run
