@@ -52,7 +52,7 @@ public class PongScreen extends GameScreen {
 		winScore = config.winScore();
 		empty = new Player(0, 0, this, "", ContactType.VERTICAL_PLAYER, ColorTypes.GREEN);
 		empty.setActive(false);
-		viewport = new FitViewport(PONG_SCREEN_SIZE, PONG_SCREEN_SIZE);
+		viewport = new FitViewport(PONG_SCREEN_SIZE, PONG_SCREEN_SIZE, camera);
 
 		playerNumber = update.participants().size();
 		players = new HashMap<>(playerNumber);
