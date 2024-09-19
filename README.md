@@ -1,5 +1,7 @@
 # rooms-client
 
+## Real-Time Chat and Activities Application Client for the Rooms Platform
+
 This is the client component of Rooms platform built using Java, LibGDX for the UI, and Spring
 Boot for the WebSocket client. The client connects to the server to enable real-time
 communication between users. For the server component see
@@ -20,12 +22,22 @@ communication between users. For the server component see
 
 ### How to Run
 
-1. **Clone the repository:**
+1. **Ensure Java version is 21:**
+    ```shell
+    java -version
+   ```
+2. **Clone the repository:**
     ```shell
     git clone https://github.com/RoyalGucci/rooms-client.git
     cd rooms-client
     ```
-2. **Start the server:**
+3. **Under the `/assets` directory, create the file `config.cfg` and fill it with the address of
+   the server. If no such file is present, `localhost:8080` would be used instead. Example
+   content:**
+   ```
+   192.168.1.10:8080
+   ```
+4. **Start the client:**
     ```shell
     ./gradlew run
     ```
