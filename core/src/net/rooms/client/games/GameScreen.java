@@ -7,11 +7,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import net.rooms.client.Client;
 import net.rooms.client.connection.objects.GameUpdate;
-import net.rooms.client.games.pong.helper.Const;
 
 public abstract class GameScreen extends ScreenAdapter {
 	protected final Client client;
@@ -21,7 +19,6 @@ public abstract class GameScreen extends ScreenAdapter {
 	protected final OrthographicCamera camera; //where do we look at
 	protected final SpriteBatch batch; //add things like images
 	protected final World world; //used for the gravity
-	protected final Box2DDebugRenderer box2DDebugRenderer;
 
 	public GameScreen(Client client, GameUpdate update, long gameID) {
 		this.client = client;
@@ -34,7 +31,6 @@ public abstract class GameScreen extends ScreenAdapter {
 		camera.position.set(new Vector3((float) Gdx.graphics.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2, 0));
 		batch = new SpriteBatch();
 		world = new World(new Vector2(0, 0), false);
-		box2DDebugRenderer = new Box2DDebugRenderer();
 	}
 
 	protected void update() {
@@ -46,7 +42,6 @@ public abstract class GameScreen extends ScreenAdapter {
 	protected void render() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		box2DDebugRenderer.render(world, camera.combined.scl(Const.ppm));
 	}
 
 	public abstract void onDisconnect(String username);
